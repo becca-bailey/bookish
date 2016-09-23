@@ -1,4 +1,4 @@
-defmodule Library.ChannelCase do
+defmodule Bookish.ChannelCase do
   @moduledoc """
   This module defines the test case to be used by
   channel tests.
@@ -20,22 +20,22 @@ defmodule Library.ChannelCase do
       # Import conveniences for testing with channels
       use Phoenix.ChannelTest
 
-      alias Library.Repo
+      alias Bookish.Repo
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
 
 
       # The default endpoint for testing
-      @endpoint Library.Endpoint
+      @endpoint Bookish.Endpoint
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Library.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Bookish.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Library.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(Bookish.Repo, {:shared, self()})
     end
 
     :ok

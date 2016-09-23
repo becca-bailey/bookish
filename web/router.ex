@@ -1,5 +1,5 @@
-defmodule Library.Router do
-  use Library.Web, :router
+defmodule Bookish.Router do
+  use Bookish.Web, :router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -13,14 +13,14 @@ defmodule Library.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", Library do
+  scope "/", Bookish do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", Library do
+  # scope "/api", Bookish do
   #   pipe_through :api
   # end
 end

@@ -1,8 +1,8 @@
-defmodule Library.UserSocket do
+defmodule Bookish.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", Library.RoomChannel
+  # channel "room:*", Bookish.RoomChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
@@ -30,7 +30,7 @@ defmodule Library.UserSocket do
   # Would allow you to broadcast a "disconnect" event and terminate
   # all active sockets and channels for a given user:
   #
-  #     Library.Endpoint.broadcast("users_socket:#{user.id}", "disconnect", %{})
+  #     Bookish.Endpoint.broadcast("users_socket:#{user.id}", "disconnect", %{})
   #
   # Returning `nil` makes this socket anonymous.
   def id(_socket), do: nil

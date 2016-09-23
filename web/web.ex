@@ -1,12 +1,12 @@
-defmodule Library.Web do
+defmodule Bookish.Web do
   @moduledoc """
   A module that keeps using definitions for controllers,
   views and so on.
 
   This can be used in your application as:
 
-      use Library.Web, :controller
-      use Library.Web, :view
+      use Bookish.Web, :controller
+      use Bookish.Web, :view
 
   The definitions below will be executed for every view,
   controller, etc, so keep them short and clean, focused
@@ -30,12 +30,12 @@ defmodule Library.Web do
     quote do
       use Phoenix.Controller
 
-      alias Library.Repo
+      alias Bookish.Repo
       import Ecto
       import Ecto.Query
 
-      import Library.Router.Helpers
-      import Library.Gettext
+      import Bookish.Router.Helpers
+      import Bookish.Gettext
     end
   end
 
@@ -49,9 +49,9 @@ defmodule Library.Web do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      import Library.Router.Helpers
-      import Library.ErrorHelpers
-      import Library.Gettext
+      import Bookish.Router.Helpers
+      import Bookish.ErrorHelpers
+      import Bookish.Gettext
     end
   end
 
@@ -65,10 +65,10 @@ defmodule Library.Web do
     quote do
       use Phoenix.Channel
 
-      alias Library.Repo
+      alias Bookish.Repo
       import Ecto
       import Ecto.Query
-      import Library.Gettext
+      import Bookish.Gettext
     end
   end
 

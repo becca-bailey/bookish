@@ -1,4 +1,4 @@
-defmodule Library.ErrorHelpers do
+defmodule Bookish.ErrorHelpers do
   @moduledoc """
   Conveniences for translating and building error messages.
   """
@@ -32,9 +32,9 @@ defmodule Library.ErrorHelpers do
     #     dgettext "errors", "is invalid"
     #
     if count = opts[:count] do
-      Gettext.dngettext(Library.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(Bookish.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(Library.Gettext, "errors", msg, opts)
+      Gettext.dgettext(Bookish.Gettext, "errors", msg, opts)
     end
   end
 end

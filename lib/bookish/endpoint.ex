@@ -1,14 +1,14 @@
-defmodule Library.Endpoint do
-  use Phoenix.Endpoint, otp_app: :library
+defmodule Bookish.Endpoint do
+  use Phoenix.Endpoint, otp_app: :bookish
 
-  socket "/socket", Library.UserSocket
+  socket "/socket", Bookish.UserSocket
 
   # Serve at "/" the static files from "priv/static" directory.
   #
   # You should set gzip to true if you are running phoenix.digest
   # when deploying your static files in production.
   plug Plug.Static,
-    at: "/", from: :library, gzip: false,
+    at: "/", from: :bookish, gzip: false,
     only: ~w(css fonts images js favicon.ico robots.txt)
 
   # Code reloading can be explicitly enabled under the
@@ -35,8 +35,8 @@ defmodule Library.Endpoint do
   # Set :encryption_salt if you would also like to encrypt it.
   plug Plug.Session,
     store: :cookie,
-    key: "_library_key",
+    key: "_bookish_key",
     signing_salt: "ojZozggQ"
 
-  plug Library.Router
+  plug Bookish.Router
 end

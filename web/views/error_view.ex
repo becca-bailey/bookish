@@ -1,5 +1,5 @@
-defmodule Library.ErrorView do
-  use Library.Web, :view
+defmodule Bookish.ErrorView do
+  use Bookish.Web, :view
 
   def render("404.html", _assigns) do
     "Page not found"
