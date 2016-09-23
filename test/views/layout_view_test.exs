@@ -1,3 +1,3 @@
-defmodule Library.LayoutViewTest do
-  use Library.ConnCase, async: true
+defmodule Bookish.LayoutViewTest do
+  use Bookish.ConnCase, async: true
 end

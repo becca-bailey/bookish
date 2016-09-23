@@ -1,5 +1,5 @@
-defmodule Library.PageControllerTest do
-  use Library.ConnCase
+defmodule Bookish.PageControllerTest do
+  use Bookish.ConnCase
 
   test "GET /", %{conn: conn} do
     conn = get conn, "/"

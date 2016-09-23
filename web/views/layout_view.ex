@@ -1,3 +1,3 @@
-defmodule Library.LayoutView do
-  use Library.Web, :view
+defmodule Bookish.LayoutView do
+  use Bookish.Web, :view
 end

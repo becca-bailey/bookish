@@ -1,4 +1,4 @@
-defmodule Library.ConnCase do
+defmodule Bookish.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -20,23 +20,23 @@ defmodule Library.ConnCase do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
 
-      alias Library.Repo
+      alias Bookish.Repo
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
 
-      import Library.Router.Helpers
+      import Bookish.Router.Helpers
 
       # The default endpoint for testing
-      @endpoint Library.Endpoint
+      @endpoint Bookish.Endpoint
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Library.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Bookish.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Library.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(Bookish.Repo, {:shared, self()})
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}

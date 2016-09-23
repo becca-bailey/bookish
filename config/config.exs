@@ -6,15 +6,15 @@
 use Mix.Config
 
 # General application configuration
-config :library,
-  ecto_repos: [Library.Repo]
+config :bookish,
+  ecto_repos: [Bookish.Repo]
 
 # Configures the endpoint
-config :library, Library.Endpoint,
+config :bookish, Bookish.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "TyAH0vNLqCorWMAhS27b7TqObyRDp0NoqJ4SYCQNOiTT4atnVIc8KjZPw3pZaa3Y",
-  render_errors: [view: Library.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: Library.PubSub,
+  render_errors: [view: Bookish.ErrorView, accepts: ~w(html json)],
+  pubsub: [name: Bookish.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
