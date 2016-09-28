@@ -1,5 +1,5 @@
 <div class="icon-links">
-  <%= link "Add a book", to: "/books/new" %>
-  <%= link "Look for a book", to: "/books" %>
+  <%= link "Add a book", to: book_path(@conn, :new) %>
+  <%= link "Look for a book", to: book_path(@conn, :index) %>
   <%= link "Return a book", to: "/books/return" %>
 </div>

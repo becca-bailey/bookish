@@ -16,8 +16,10 @@ Clone this repository
 
 In the root directory:
 ```
-mix ecto.create
 mix deps.get
+mix ecto.create
+mix ecto.migrate
+mix run priv/repo/seeds.exs
 mix phoenix.server
 ```
 Open http://localhost:4000 in your browser
