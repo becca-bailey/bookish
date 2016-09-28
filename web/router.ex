@@ -14,16 +14,10 @@ defmodule Bookish.Router do
   end
 
   scope "/", Bookish do
-    pipe_through :browser # Use the default browser stack
+    pipe_through :browser 
 
     get "/", PageController, :index
-    get "/books", BooksController, :index
-    get "/books/new", BooksController, :new
-    get "/books/return", BooksController, :return
+    get "/books/return", BookController, :return
+    resources "/books", BookController
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", Bookish do
-  #   pipe_through :api
-  # end
 end

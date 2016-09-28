@@ -1,0 +1,43 @@
+<h2>Show book</h2>
+
+<ul>
+
+  <li>
+    <strong>Title:</strong>
+    <%= @book.title %>
+  </li>
+
+  <li>
+    <strong>Author firstname:</strong>
+    <%= @book.author_firstname %>
+  </li>
+
+  <li>
+    <strong>Author lastname:</strong>
+    <%= @book.author_lastname %>
+  </li>
+
+  <li>
+    <strong>Year:</strong>
+    <%= @book.year %>
+  </li>
+
+  <li>
+    <strong>Current location:</strong>
+    <%= @book.current_location %>
+  </li>
+
+  <li>
+    <strong>Checked out:</strong>
+    <%= @book.checked_out %>
+  </li>
+
+  <li>
+    <strong>Checked out to:</strong>
+    <%= @book.checked_out_to %>
+  </li>
+
+</ul>
+
+<%= link "Edit", to: book_path(@conn, :edit, @book) %>
+<%= link "Back", to: book_path(@conn, :index) %>
