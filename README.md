@@ -1,4 +1,4 @@
-# Bookish
+# Bookish [![Build Status](https://travis-ci.org/beccanelson/bookish.svg?branch=master)](https://travis-ci.org/beccanelson/bookish)
 ### Where is that book?
 
 This is a book-tracking application built with Elixir and Phoenix
