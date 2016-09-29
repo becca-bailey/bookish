@@ -1,5 +1,21 @@
+<h1 id="main-title">Bookish</h1>
 <div class="icon-links">
-  <%= link "Add a book", to: book_path(@conn, :new) %>
-  <%= link "Look for a book", to: book_path(@conn, :index) %>
-  <%= link "Return a book", to: "/books/return" %>
+  <div class="box">
+    <a href=<%= book_path(@conn, :new) %>>
+      <div class="add"></div>
+      <p>Add a book</p>
+    </a>
+  </div>
+  <div class="box">
+    <a href=<%= book_path(@conn, :index) %>>
+      <div class="look"></div>
+      <p>Look for a book</p>
+    </a>
+  </div>
+  <div class="box">
+    <a href="/books/return">
+      <div class="return"></div>
+      <p>Return a book</p>
+    </a>
+  </div>
 </div>

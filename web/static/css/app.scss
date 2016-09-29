@@ -1,0 +1,145 @@
+@import "bourbon/bourbon";
+@import "neat/neat";
+
+// Variables
+
+$default-padding: 1em;
+$default-margin: .5em;
+$background-color: #4183D7;
+$text-color: white;
+$gray: darken($text-color, 20%);
+$error: #E26A6A;
+$icon-height: 120px;
+$font-size: 1.5em;
+
+// Media queries
+
+$medium: 600px;
+$large: 850px;
+$max-width: 1000px;
+
+// Default Styles
+
+body {
+  font-family: Lato, Helvetica-neue, sans-serif;
+  font-size: $font-size;
+  color: $text-color;
+  background-color: $background-color;
+}
+
+.container {
+  @include outer-container($max-width)
+  @include pad($default-padding)
+}
+
+// Typography
+
+a {
+  text-decoration: none;
+  color: $gray;
+  &:hover {
+    color: $text-color;
+  }
+}
+
+h1 {
+  font-family: 'Scope One', serif;
+  text-transform: lowercase;
+}
+
+#main-title {
+  text-align: center;
+  font-size: modular-scale(4);
+  margin: 0;
+  @include media($medium) {
+    margin: $default-margin;
+  }
+}
+
+// Site elements
+
+.icon-links {
+  text-align: center;
+  .box {
+    @include pad($default-padding);
+    @include media($medium) {
+      @include span-columns(4);
+    }
+    div {
+      height: $icon-height;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      @include media($large) {
+        height: $icon-height * 1.5;
+      }
+    }
+    .add {
+      background-image: url("/images/add.png");
+    }
+    .look {
+      background-image: url("/images/look.png");
+    }
+    .return {
+      background-image: url("/images/return.png");
+    }
+  }
+}
+
+.form-group {
+  .help-block {
+    color: $error;
+  }
+  @include outer-container;
+  margin-bottom: $default-margin / 2;
+  label {
+    display: block;
+    @include media($medium) {
+      text-align: right;
+      display: inline;
+      @include span-columns(4);
+    }
+  }
+  input {
+    border: 1px solid $gray;
+    padding: .5em;
+  }
+  .form-control {
+    width: 100%;
+    @include media($medium) {
+      @include span-columns(4);
+    }
+  }
+  .half {
+    .form-control {
+      @include span-columns(6);
+      @include media($medium) {
+        @include span-columns(2);
+      }
+    }
+  }
+}
+
+
+.books {
+  .entry {
+    background-color: lighten($background-color, 10%);
+    border-radius: 10px;
+    padding: $default-padding / 2;
+    margin-top: $default-margin;
+    .title {
+      margin: 0;
+    }
+    .entry-header {
+      .icons {
+        @include media($large) {
+          float: right;
+        }
+      }
+      form {
+        display: inline-block;
+      }
+    }
+  }
+}
+
