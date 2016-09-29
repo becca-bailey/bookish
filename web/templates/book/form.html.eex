@@ -13,9 +13,14 @@
 
   <div class="form-group">
     <%= label f, "Author", class: "control-label" %>
-    <%= text_input f, :author_firstname, class: "form-control", placeholder: "First name" %>
+    <div class="half">
+      <%= text_input f, :author_firstname, class: "form-control", placeholder: "First name" %>
+    </div>
+    <div class="half">
+      <%= text_input f, :author_lastname, class: "form-control", placeholder: "Last name" %>
+    </div>
     <%= error_tag f, :author_firstname %>
-    <%= text_input f, :author_lastname, class: "form-control", placeholder: "Last name" %>
+    <br>
     <%= error_tag f, :author_lastname %>
   </div>
 

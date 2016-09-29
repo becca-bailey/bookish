@@ -1,38 +1,30 @@
-<h2>Listing books</h2>
+<%= render Bookish.SharedView, "_header.html", conn: @conn %>
+<h2>Where is that book?</h2>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>Author firstname</th>
-      <th>Author lastname</th>
-      <th>Year</th>
-      <th>Current location</th>
-      <th>Checked out</th>
-      <th>Checked out to</th>
-
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-<%= for book <- @books do %>
-    <tr>
-      <td><%= book.title %></td>
-      <td><%= book.author_firstname %></td>
-      <td><%= book.author_lastname %></td>
-      <td><%= book.year %></td>
-      <td><%= book.current_location %></td>
-      <td><%= book.checked_out %></td>
-      <td><%= book.checked_out_to %></td>
-
-      <td class="text-right">
-        <%= link "Show", to: book_path(@conn, :show, book), class: "btn btn-default btn-xs" %>
-        <%= link "Edit", to: book_path(@conn, :edit, book), class: "btn btn-default btn-xs" %>
-        <%= link "Delete", to: book_path(@conn, :delete, book), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
-      </td>
-    </tr>
-<% end %>
-  </tbody>
-</table>
-
-<%= link "New book", to: book_path(@conn, :new) %>
+<div class="books">
+  <%= for book <- @books do %>
+    <div class="entry">
+      <div class="entry-header">
+        <h3 class="title"><%= book.title %>
+          <span class="icons">
+            <%= link to: book_path(@conn, :edit, book) do %>
+              <i class="fa fa-edit"></i>
+            <% end %>
+            <%= link to: book_path(@conn, :delete, book), method: :delete, data: [confirm: "Are you sure you want to delete this book?"] do %>
+              <i class="fa fa-remove"></i>
+            <% end %>
+          </span>
+        </h3>
+      </div>
+      <div class="author"><%= book.author_firstname %> <%= book.author_lastname %></div>
+      <div class="location_check_out">
+        <%= if book.checked_out do %>
+          Checked out by <%= book.checked_out_to %>
+        <% else %>
+          <%= book.current_location %>
+          <div class="check-out"><a href="#">Check out</a></div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

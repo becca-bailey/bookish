@@ -1,3 +1,5 @@
+<%= render Bookish.SharedView, "_header.html", conn: @conn %>
+
 <h2>New book</h2>
 
 <%= render "form.html", changeset: @changeset,
