@@ -1,1 +1,2 @@
+<%= render Bookish.SharedView, "_header.html", conn: @conn %>
 <h2>Which book are you returning?</h2>

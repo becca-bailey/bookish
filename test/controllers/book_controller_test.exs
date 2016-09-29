@@ -12,7 +12,7 @@ defmodule Bookish.BookControllerTest do
 
   test "lists all entries on index", %{conn: conn} do
     conn = get conn, book_path(conn, :index)
-    assert html_response(conn, 200) =~ "Listing books"
+    assert conn.status == 200
   end
 
   test "renders form for new resources", %{conn: conn} do
