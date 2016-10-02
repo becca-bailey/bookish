@@ -27,16 +27,6 @@
     <%= @book.current_location %>
   </li>
 
-  <li>
-    <strong>Checked out:</strong>
-    <%= @book.checked_out %>
-  </li>
-
-  <li>
-    <strong>Checked out to:</strong>
-    <%= @book.checked_out_to %>
-  </li>
-
 </ul>
 
 <%= link "Edit", to: book_path(@conn, :edit, @book) %>

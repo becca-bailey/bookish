@@ -1,0 +1,26 @@
+<h2>Listing check outs</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Book</th>
+      <th>Checked out to</th>
+      <th>Return date</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for check_out <- @check_outs do %>
+    <tr>
+      <td><%= check_out.book_id %></td>
+      <td><%= check_out.checked_out_to %></td>
+      <td><%= check_out.return_date %></td>
+
+      <td class="text-right">
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+

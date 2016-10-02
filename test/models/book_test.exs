@@ -40,58 +40,33 @@ defmodule Bookish.BookTest do
     refute changeset.valid?
   end
 
-  @tag :checkout
-  test "checkout is valid with checked_out and checked_out_to" do
-    attributes = %{checked_out: true, checked_out_to: "name", current_location: ""}
-    changeset = Book.checkout(%Book{}, attributes)
-    assert changeset.valid?
+  test "checked_out defaults to false" do
+    book = Repo.insert!(%Book{})
+    refute book.checked_out
   end
 
-  @tag :checkout
-  test "checked out must be true" do
-    attributes = %{checked_out: false, checked_out_to: "name", current_location: ""}
-    changeset = Book.checkout(%Book{}, attributes)
-    refute changeset.valid?
-  end
-
-  @tag :checkout
-  test "checked_out_to must not be an empty string" do
-    attributes = %{checked_out: true, checked_out_to: "", current_location: ""}
-    changeset = Book.checkout(%Book{}, attributes)
-    refute changeset.valid?
+  test "checked_out can be set to true" do
+    book = Repo.insert!(%Book{checked_out: true})
+    assert book.checked_out
   end
 
   @tag :checkout
   test "current_location must be an empty string" do
-    attributes = %{checked_out: true, checked_out_to: "", current_location: "location"}
+    attributes = %{current_location: "location"}
     changeset = Book.checkout(%Book{}, attributes)
     refute changeset.valid?
   end
   
   @tag :return
-  test "return is valid with checked_out and current_location" do
-    attributes = %{checked_out: false, checked_out_to: "", current_location: "location"}
+  test "return is valid with current_location" do
+    attributes = %{current_location: "location"}
     changeset = Book.return(%Book{}, attributes)
     assert changeset.valid?
   end
 
   @tag :return
-  test "checked out must be false" do
-    attributes = %{checked_out: true, checked_out_to: "", current_location: "location"}
-    changeset = Book.return(%Book{}, attributes)
-    refute changeset.valid?
-  end
-
-  @tag :return
-  test "checked_out_to must be an empty string" do
-    attributes = %{checked_out: false, checked_out_to: "name", current_location: "location"}
-    changeset = Book.return(%Book{}, attributes)
-    refute changeset.valid?
-  end
-
-  @tag :return
   test "current location must not be an empty string" do
-    attributes = %{checked_out: false, checked_out_to: "name", current_location: ""}
+    attributes = %{current_location: ""}
     changeset = Book.return(%Book{}, attributes)
     refute changeset.valid?
   end

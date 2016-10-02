@@ -22,7 +22,7 @@
           Checked out by <%= book.checked_out_to %>
         <% else %>
           <%= book.current_location %>
-          <div class="check-out"><a href="#">Check out</a></div>
+          <div class="check-out"><%= link("Check out", to: book_check_out_path(@conn, :new, book))%></div>
         <% end %>
       </div>
     </div>

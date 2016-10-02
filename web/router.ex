@@ -18,6 +18,9 @@ defmodule Bookish.Router do
 
     get "/", PageController, :index
     get "/books/return", BookController, :return
-    resources "/books", BookController
+
+    resources "/books", BookController do
+      resources "/check_outs", CheckOutController
+    end
   end
 end
