@@ -8,8 +8,6 @@ defmodule Bookish.Repo.Migrations.CreateBook do
       add :author_lastname, :string
       add :year, :integer
       add :current_location, :string
-      add :checked_out, :boolean, default: false, null: false
-      add :checked_out_to, :string
 
       timestamps()
     end

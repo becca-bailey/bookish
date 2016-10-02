@@ -7,8 +7,10 @@ defmodule Bookish.Book do
     field :author_lastname, :string
     field :year, :integer
     field :current_location, :string
-    field :checked_out, :boolean, default: false
-    field :checked_out_to, :string
+    field :checked_out, :boolean, virtual: true, default: false
+    field :checked_out_to, :string, virtual: true
+
+    has_many :check_outs, Bookish.CheckOut
 
     timestamps()
   end
@@ -25,17 +27,13 @@ defmodule Bookish.Book do
 
   def checkout(struct, params \\ %{}) do
     struct
-    |> cast(params, [:checked_out, :checked_out_to, :current_location])
-    |> validate_required([:checked_out, :checked_out_to])
-    |> validate_acceptance(:checked_out)
+    |> cast(params, [:checked_out_to, :checked_out, :current_location])
     |> validate_inclusion(:current_location, ["", nil])
   end
 
   def return(struct, params \\ %{}) do
     struct 
-    |> cast(params, [:checked_out, :checked_out_to, :current_location])
-    |> validate_required([:checked_out, :current_location])
-    |> validate_inclusion(:checked_out, [false])
-    |> validate_inclusion(:checked_out_to, ["", nil])
+    |> cast(params, [:current_location])
+    |> validate_required([:current_location])
   end
 end

@@ -2,9 +2,11 @@ defmodule Bookish.BookController do
   use Bookish.Web, :controller
 
   alias Bookish.Book
+  alias Bookish.Circulation
 
   def index(conn, _params) do
     books = Repo.all(Book)
+    |> Circulation.set_virtual_attributes 
     render(conn, "index.html", books: books)
   end
 
@@ -58,9 +60,6 @@ defmodule Bookish.BookController do
 
   def delete(conn, %{"id" => id}) do
     book = Repo.get!(Book, id)
-
-    # Here we use delete! (with a bang) because we expect
-    # it to always work (and if it does not, it will raise).
     Repo.delete!(book)
 
     conn

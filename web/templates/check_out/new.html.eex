@@ -1,0 +1,6 @@
+<h2>Enter your name to check out <%= @conn.assigns[:book].title %></h2>
+
+<%= render "form.html", changeset: @changeset,
+                        action: book_check_out_path(@conn, :create, @conn.assigns[:book]) %>
+
+<%= link "Back", to: book_check_out_path(@conn, :index, @conn.assigns[:book]) %>
