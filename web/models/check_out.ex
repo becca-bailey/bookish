@@ -21,6 +21,12 @@ defmodule Bookish.CheckOut do
     |> validate_not_checked_out
   end
 
+  def return(struct, params \\ %{}) do
+    struct
+    |> cast(params, [:return_date])
+    |> validate_required([:return_date])
+  end
+
   defp validate_not_checked_out(changeset) do
     id = get_field(changeset, :book_id)
     validate_not_checked_out(changeset, id)

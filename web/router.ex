@@ -12,12 +12,15 @@ defmodule Bookish.Router do
   pipeline :api do
     plug :accepts, ["json"]
   end
+    
 
   scope "/", Bookish do
     pipe_through :browser 
 
     get "/", PageController, :index
-    get "/books/return", BookController, :return
+    get "/books/checked_out", BookController, :checked_out
+    get "/books/:id/return", BookController, :return, as: :book   
+    post "/books/:id/return", Circulation, :process_return, as: :circulation
 
     resources "/books", BookController do
       resources "/check_outs", CheckOutController
