@@ -1,5 +1,6 @@
 defmodule Bookish.Circulation do
   use Bookish.Web, :controller
+  import Ecto.Query
 
   alias Bookish.Book
   alias Bookish.CheckOut
@@ -34,12 +35,41 @@ defmodule Bookish.Circulation do
     end
   end
 
+  defp add_return_date(book) do
+    date = 
+      DateTime.utc_now()
+      |> DateTime.to_date 
+      
+    changeset = 
+      CheckOut.current(CheckOut, book.id)
+      |> Repo.all
+      |> List.first
+      |> CheckOut.return(%{"return_date": date})
+
+    Repo.update(changeset)
+  end
+
+  def process_return(conn, %{"id" => id, "book" => book_params}) do
+    book = Repo.get!(Book, id)
+    add_return_date(book)
+    changeset = Book.return(book, book_params)
+
+    case Repo.update(changeset) do
+      {:ok, _book} ->
+        conn
+        |> put_flash(:info, "Book has been returned!")
+        |> redirect(to: book_path(conn, :index))
+      {:error, changeset} ->
+        render(conn, "return.html", book: book, changeset: changeset)
+    end
+  end
+
   def set_virtual_attributes(coll) do
     coll 
     |> Enum.map(&(set_attributes(&1)))
   end
 
-  defp set_attributes(book) do
+  def set_attributes(book) do
     if checked_out?(book) do 
       changeset = 
         book
@@ -51,5 +81,12 @@ defmodule Bookish.Circulation do
     else
       book
     end
+  end
+
+  def checked_out(query) do
+    from b in query,
+      join: c in CheckOut, on: c.book_id == b.id,
+      where: is_nil(c.return_date),
+      select: b
   end
 end

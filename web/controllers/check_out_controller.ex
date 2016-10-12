@@ -13,14 +13,13 @@ defmodule Bookish.CheckOutController do
 
   def new(conn, _params) do
     book = conn.assigns[:book]
-    cond do
-      Circulation.checked_out? book ->
-        conn
-        |> put_flash(:error, "Book is already checked out!")
-        |> redirect(to: book_path(conn, :index))
-      true ->
-        changeset = CheckOut.changeset(%CheckOut{})
-        render(conn, "new.html", changeset: changeset)
+    if Circulation.checked_out? book do
+      conn
+      |> put_flash(:error, "Book is already checked out!")
+      |> redirect(to: book_path(conn, :index))
+    else
+      changeset = CheckOut.changeset(%CheckOut{})
+      render(conn, "new.html", changeset: changeset)
     end
   end
 
