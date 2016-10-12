@@ -16,14 +16,6 @@ defmodule Bookish.BookController do
     render(conn, "new.html", changeset: changeset)
   end
 
-  def checked_out(conn, _params) do
-    books = 
-      Circulation.checked_out(Book) 
-      |> Repo.all
-      |> Circulation.set_virtual_attributes
-    render(conn, "checked_out.html", books: books)
-  end
-
   def create(conn, %{"book" => book_params}) do
     changeset = Book.changeset(%Book{}, book_params)
 
@@ -35,12 +27,6 @@ defmodule Bookish.BookController do
       {:error, changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
-  end
-
-  def return(conn, %{"id" => id}) do
-    book = Repo.get!(Book, id)
-    changeset = Book.return(%Book{})
-    render(conn, "return.html", book: book, changeset: changeset) 
   end
 
   def show(conn, %{"id" => id}) do

@@ -8,6 +8,42 @@ defmodule Bookish.CirculationTest do
 
   @book_attrs %{author_firstname: "some content", author_lastname: "some content", current_location: "some content", title: "some content", year: 2016}
 
+  test "renders checked_out page", %{conn: conn} do
+    conn = get conn, "/books/checked_out"
+    assert conn.status == 200
+  end
+
+  test "shows a form to return a book", %{conn: conn} do
+    book = Repo.insert! %Book{}
+    conn = get conn, circulation_path(conn, :return, book)
+    assert conn.status == 200
+  end
+
+  test "checked_out renders only books that are checked out", %{conn: conn} do
+    checked_out_book = Repo.insert! %Book{title: "This book is checked out"}  
+    Repo.insert! %Book{title: "This book is not checked out"}
+
+    check_out = 
+      Ecto.build_assoc(checked_out_book, :check_outs, checked_out_to: "Person")
+    Repo.insert!(check_out)
+
+    conn = get conn, circulation_path(conn, :checked_out)
+    assert html_response(conn, 200) =~ "This book is checked out"
+    refute html_response(conn, 200) =~ "This book is not checked out"
+  end
+
+  test "checked_out displays the name of the person who has checked out the book", %{conn: conn} do
+    checked_out_book = Repo.insert! %Book{title: "This book is checked out"}  
+
+    check_out = 
+      Ecto.build_assoc(checked_out_book, :check_outs, checked_out_to: "Becca")
+    Repo.insert!(check_out)
+
+    conn = get conn, circulation_path(conn, :checked_out)
+    assert html_response(conn, 200) =~ "Becca"
+    refute html_response(conn, 200) =~ "This book is not checked out"
+  end
+
   test "checked_out? returns false if no check_out record exists for the book" do
     book = Repo.insert! %Book{} 
 
@@ -68,20 +104,20 @@ defmodule Bookish.CirculationTest do
   test "checked out books returns an empty list if no books are checked out" do
     Repo.insert! %Book{}
     
-    assert Helpers.empty? Circulation.checked_out(Book) |> Repo.all 
+    assert Helpers.empty? Circulation.get_checked_out(Book) |> Repo.all 
   end
 
-  test "checked out books queries books that are checked out" do
+  test "get_checked_out queries resources that are checked out" do
     book = Repo.insert! %Book{}
     check_out = 
       Ecto.build_assoc(book, :check_outs, checked_out_to: "Person")
     Repo.insert!(check_out)
     
-    assert List.first(Circulation.checked_out(Book) |> Repo.all) == book
+    assert List.first(Circulation.get_checked_out(Book) |> Repo.all) == book
   end
 
-  test "checked out returns an empty collection if there are no books to query" do
-    assert Helpers.empty? Circulation.checked_out(Book) |> Repo.all
+  test "get_checked_out returns an empty collection if there are no books to query" do
+    assert Helpers.empty? Circulation.get_checked_out(Book) |> Repo.all
   end
   
   test "updates the current location when returning a book with a valid location", %{conn: conn} do
