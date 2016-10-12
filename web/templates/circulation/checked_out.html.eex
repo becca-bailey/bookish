@@ -9,8 +9,10 @@
       </div>
       <div class="author"><%= book.author_firstname %> <%= book.author_lastname %></div>
       <div class="location_check_out">
-        <p>Checked out by <%= book.checked_out_to %></p>
-        <%= link("Return", to: book_path(@conn, :return, book))%>
+        Checked out by <%= book.checked_out_to %>
+        <div class="return">
+          <%= link("Return", to: circulation_path(@conn, :return, book))%>
+        </div>
       </div>
     </div>
   <% end %>

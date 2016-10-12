@@ -5,6 +5,46 @@ defmodule Bookish.Circulation do
   alias Bookish.Book
   alias Bookish.CheckOut
 
+  def checked_out(conn, _params) do
+    books = 
+      get_checked_out(Book) 
+      |> Repo.all
+      |> set_virtual_attributes
+    render(conn, "checked_out.html", books: books)
+  end
+
+  def check_out(conn) do
+    changeset = 
+      conn.assigns[:book]
+      |> Book.checkout(%{"current_location": ""})
+      
+    case Repo.update (changeset) do
+      {:ok, book} ->
+        book
+    end
+  end
+
+  def return(conn, %{"id" => id}) do
+    book = Repo.get!(Book, id)
+    changeset = Book.return(%Book{})
+    render(conn, "return.html", book: book, changeset: changeset) 
+  end
+  
+  def process_return(conn, %{"id" => id, "book" => book_params}) do
+    book = Repo.get!(Book, id)
+    add_return_date(book)
+    changeset = Book.return(book, book_params)
+
+    case Repo.update(changeset) do
+      {:ok, _book} ->
+        conn
+        |> put_flash(:info, "Book has been returned!")
+        |> redirect(to: book_path(conn, :index))
+      {:error, changeset} ->
+        render(conn, "return.html", book: book, changeset: changeset)
+    end
+  end
+
   def checked_out?(book) do
     not_empty?(CheckOut.current(CheckOut, book.id) |> Repo.all)
   end
@@ -24,17 +64,6 @@ defmodule Bookish.Circulation do
     List.first(coll) != nil
   end
 
-  def check_out(conn) do
-    changeset = 
-      conn.assigns[:book]
-      |> Repo.preload([:check_outs])
-      |> Book.checkout(%{"current_location": ""})
-    case Repo.update (changeset) do
-      {:ok, book} ->
-        book
-    end
-  end
-
   defp add_return_date(book) do
     date = 
       DateTime.utc_now()
@@ -49,20 +78,6 @@ defmodule Bookish.Circulation do
     Repo.update(changeset)
   end
 
-  def process_return(conn, %{"id" => id, "book" => book_params}) do
-    book = Repo.get!(Book, id)
-    add_return_date(book)
-    changeset = Book.return(book, book_params)
-
-    case Repo.update(changeset) do
-      {:ok, _book} ->
-        conn
-        |> put_flash(:info, "Book has been returned!")
-        |> redirect(to: book_path(conn, :index))
-      {:error, changeset} ->
-        render(conn, "return.html", book: book, changeset: changeset)
-    end
-  end
 
   def set_virtual_attributes(coll) do
     coll 
@@ -83,7 +98,7 @@ defmodule Bookish.Circulation do
     end
   end
 
-  def checked_out(query) do
+  def get_checked_out(query) do
     from b in query,
       join: c in CheckOut, on: c.book_id == b.id,
       where: is_nil(c.return_date),
