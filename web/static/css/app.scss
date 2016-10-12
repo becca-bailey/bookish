@@ -12,6 +12,7 @@ $error: #E26A6A;
 $icon-height: 120px;
 $font-size: 1.5em;
 $icon-height: 120px;
+$card-highlight-color: #5EBB75; 
 
 // Media queries
 
@@ -122,6 +123,9 @@ h1 {
 }
 
 .books {
+  .entry.available {
+    background-color: $card-highlight-color;
+  }
   .entry {
     background-color: lighten($background-color, 10%);
     border-radius: 10px;

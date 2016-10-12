@@ -3,7 +3,7 @@
 
 <div class="books">
   <%= for book <- @books do %>
-    <div class="entry">
+    <div class="entry <%= get_class_name(book) %>">
       <div class="entry-header">
         <h3 class="title"><%= book.title %>
           <span class="icons">

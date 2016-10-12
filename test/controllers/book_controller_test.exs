@@ -12,11 +12,10 @@ defmodule Bookish.BookControllerTest do
   end
 
   test "if a book is checked out, index displays the name of the person who has checked out the book", %{conn: conn} do
-    checked_out_book = Repo.insert! %Book{title: "This book is checked out"}  
+    book = Repo.insert! %Book{title: "This book is checked out"}  
 
-    check_out = 
-      Ecto.build_assoc(checked_out_book, :check_outs, checked_out_to: "Becca")
-    Repo.insert!(check_out)
+    Ecto.build_assoc(book, :check_outs, checked_out_to: "Becca")
+    |> Repo.insert!
 
     conn = get conn, book_path(conn, :index)
     assert html_response(conn, 200) =~ "Becca"
@@ -28,6 +27,23 @@ defmodule Bookish.BookControllerTest do
     conn = get conn, book_path(conn, :index)
     assert html_response(conn, 200) =~ "Check out"
     assert html_response(conn, 200) =~ "This is my book"
+  end
+
+  test "if a book is checked out, the div has the class 'checked-out", %{conn: conn} do
+    book = Repo.insert! %Book{title: "This book is checked out"}  
+    
+    Ecto.build_assoc(book, :check_outs, checked_out_to: "Becca")
+    |> Repo.insert!
+
+    conn = get conn, book_path(conn, :index)
+    assert html_response(conn, 200) =~ "checked-out"
+  end
+
+  test "if a book is not checked out, the div has the class 'available'", %{conn: conn} do
+    Repo.insert! %Book{title: "This book is not checked out"}  
+
+    conn = get conn, book_path(conn, :index)
+    assert html_response(conn, 200) =~ "available"
   end
 
   test "renders form to add a new book", %{conn: conn} do
