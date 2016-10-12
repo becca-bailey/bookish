@@ -17,6 +17,7 @@ defmodule Bookish.Circulation do
     changeset = 
       conn.assigns[:book]
       |> Book.checkout(%{"current_location": ""})
+      
     case Repo.update (changeset) do
       {:ok, book} ->
         book

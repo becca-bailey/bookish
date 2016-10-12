@@ -45,19 +45,7 @@ defmodule Bookish.BookControllerTest do
     conn = post conn, book_path(conn, :create), book: @invalid_attrs
     assert html_response(conn, 200) =~ "New book"
   end
-
-  test "shows details for a book", %{conn: conn} do
-    book = Repo.insert! %Book{}
-    conn = get conn, book_path(conn, :show, book)
-    assert html_response(conn, 200) =~ "Show book"
-  end
-
-  test "renders page not found when id is nonexistent", %{conn: conn} do
-    assert_error_sent 404, fn ->
-      get conn, book_path(conn, :show, -1)
-    end
-  end
-
+  
   test "renders form for editing a book", %{conn: conn} do
     book = Repo.insert! %Book{}
     conn = get conn, book_path(conn, :edit, book)
@@ -67,7 +55,7 @@ defmodule Bookish.BookControllerTest do
   test "updates a book and redirects when data is valid", %{conn: conn} do
     book = Repo.insert! %Book{}
     conn = put conn, book_path(conn, :update, book), book: @valid_attrs
-    assert redirected_to(conn) == book_path(conn, :show, book)
+    assert redirected_to(conn) == book_path(conn, :index)
     assert Repo.get_by(Book, @valid_attrs)
   end
 

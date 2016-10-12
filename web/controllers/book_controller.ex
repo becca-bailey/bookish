@@ -29,11 +29,6 @@ defmodule Bookish.BookController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    book = Repo.get!(Book, id)
-    render(conn, "show.html", book: book)
-  end
-
   def edit(conn, %{"id" => id}) do
     book = Repo.get!(Book, id)
     changeset = Book.changeset(book)
@@ -48,7 +43,7 @@ defmodule Bookish.BookController do
       {:ok, book} ->
         conn
         |> put_flash(:info, "Book updated successfully.")
-        |> redirect(to: book_path(conn, :show, book))
+        |> redirect(to: book_path(conn, :index))
       {:error, changeset} ->
         render(conn, "edit.html", book: book, changeset: changeset)
     end

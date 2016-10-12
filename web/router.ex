@@ -26,8 +26,8 @@ defmodule Bookish.Router do
 
     get "/", PageController, :index
 
-    resources "/books", BookController do
-      resources "/check_outs", CheckOutController
+    resources "/books", BookController, except: [:show] do
+      resources "/check_outs", CheckOutController, only: [:index, :new, :create]
     end
   end
 end
