@@ -6,11 +6,14 @@
   <% end %>
 
   <div class="form-group">
+    <%= label f, "What is your name?", class: "control-label" %>
     <%= text_input f, :checked_out_to, class: "form-control" %>
+  </div>
+  <div class="form-error">
     <%= error_tag f, :checked_out_to %>
   </div>
 
-  <div class="form-group">
+  <div class="form-group submit">
     <%= submit "Submit", class: "btn btn-primary" %>
   </div>
 <% end %>

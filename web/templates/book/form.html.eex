@@ -8,35 +8,40 @@
   <div class="form-group">
     <%= label f, :title, class: "control-label" %>
     <%= text_input f, :title, class: "form-control" %>
+  </div>
+  <div class="form-error">
     <%= error_tag f, :title %>
   </div>
 
   <div class="form-group">
     <%= label f, "Author", class: "control-label" %>
-    <div class="half">
+    <div class="input-group">
       <%= text_input f, :author_firstname, class: "form-control", placeholder: "First name" %>
-    </div>
-    <div class="half">
       <%= text_input f, :author_lastname, class: "form-control", placeholder: "Last name" %>
     </div>
+  </div>
+  <div class="form-error error-group">
     <%= error_tag f, :author_firstname %>
-    <br>
     <%= error_tag f, :author_lastname %>
   </div>
 
   <div class="form-group">
     <%= label f, :year, class: "control-label" %>
     <%= number_input f, :year, class: "form-control" %>
+  </div>
+  <div class="form-error">
     <%= error_tag f, :year %>
   </div>
 
   <div class="form-group">
     <%= label f, :current_location, class: "control-label" %>
     <%= text_input f, :current_location, class: "form-control" %>
+  </div>
+  <div class="form-error">
     <%= error_tag f, :current_location %>
   </div>
 
-  <div class="form-group">
+  <div class="form-group submit">
     <%= submit "Submit", class: "btn btn-primary" %>
   </div>
 <% end %>

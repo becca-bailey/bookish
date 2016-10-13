@@ -10,17 +10,20 @@
   <% end %>
 
   <div class="form-group">
-    <%= label f, "Where are you returning this book to?", class: "control-label" %>
+    <%= label f, "Where does this book live now?", class: "control-label" %>
     <%= text_input f, :current_location, class: "form-control" 
   %>
+  </div>
+
+  <div class="form-error">
     <%= error_tag f, :current_location %>
   </div>
   
-  <div class="form-group">
+  <div class="form-group submit">
     <%= submit "Submit", class: "btn btn-primary" %>
   </div>
 <% end %>
 
-
+<%= link "Back", to: circulation_path(@conn, :checked_out) %>
 
 
