@@ -1,5 +1,6 @@
 defmodule Bookish.Book do
   use Bookish.Web, :model
+  import Ecto.Query
 
   schema "books" do
     field :title, :string
@@ -35,5 +36,17 @@ defmodule Bookish.Book do
     struct 
     |> cast(params, [:current_location])
     |> validate_required([:current_location])
+  end
+  
+  def sorted_by_title do
+    from b in Bookish.Book,
+    order_by: b.title,
+    select: b
+  end
+
+  def get_by_letter(letter) do
+    from b in Bookish.Book,
+    where: ilike(b.title, ^"#{letter}%"),
+    select: b
   end
 end

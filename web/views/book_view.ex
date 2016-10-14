@@ -8,4 +8,8 @@ defmodule Bookish.BookView do
       "available"
     end
   end
+
+  def char_to_string(char) do
+    String.upcase(List.to_string([char]))
+  end
 end

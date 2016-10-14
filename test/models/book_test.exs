@@ -70,4 +70,24 @@ defmodule Bookish.BookTest do
     changeset = Book.return(%Book{}, attributes)
     refute changeset.valid?
   end
+
+  test "sorted_by_title query returns a list of books sorted by title" do
+    b = Repo.insert!(%Book{title: "B"})
+    a = Repo.insert!(%Book{title: "A"})
+    c = Repo.insert!(%Book{title: "C"})
+
+    expectedList = [a, b, c]
+
+    refute Repo.all(Book) == expectedList
+    assert Book.sorted_by_title |> Repo.all == expectedList
+  end
+
+  test "get_by_letter returns all books with titles starting with a certain letter do" do
+    a = Repo.insert!(%Book{title: "A"})
+    b = Repo.insert!(%Book{title: "B"})
+
+    assert Book.get_by_letter("A") |> Repo.all == [a]
+    assert Book.get_by_letter("b") |> Repo.all == [b]
+    assert Book.get_by_letter("C") |> Repo.all == []
+  end
 end

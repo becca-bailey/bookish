@@ -11,6 +11,15 @@ defmodule Bookish.BookControllerTest do
     assert conn.status == 200
   end
 
+  test "lists books by letter", %{conn: conn} do
+    Repo.insert! %Book{title: "A brief history of programming"}
+    Repo.insert! %Book{title: "Something else"}
+    conn = get conn, book_path(conn, :index_by_letter, "A")
+
+    assert html_response(conn, 200) =~ "A brief history of programming" 
+    refute html_response(conn, 200) =~ "Something else"
+  end
+
   test "if a book is checked out, index displays the name of the person who has checked out the book", %{conn: conn} do
     book = Repo.insert! %Book{title: "This book is checked out"}  
 

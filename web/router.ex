@@ -15,7 +15,7 @@ defmodule Bookish.Router do
 
   scope "/books", Bookish do
     pipe_through :browser
-
+    get "/starting-with/:letter", BookController, :index_by_letter, as: :book
     get "/checked_out", Circulation, :checked_out, as: :circulation
     get "/:id/return", Circulation, :return, as: :circulation
     post "/:id/return", Circulation, :process_return, as: :circulation
