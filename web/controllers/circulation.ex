@@ -32,11 +32,11 @@ defmodule Bookish.Circulation do
   
   def process_return(conn, %{"id" => id, "book" => book_params}) do
     book = Repo.get!(Book, id)
-    add_return_date(book)
     changeset = Book.return(book, book_params)
 
     case Repo.update(changeset) do
-      {:ok, _book} ->
+      {:ok, book} ->
+        add_return_date(book)
         conn
         |> put_flash(:info, "Book has been returned!")
         |> redirect(to: book_path(conn, :index))

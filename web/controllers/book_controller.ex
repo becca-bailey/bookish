@@ -6,8 +6,17 @@ defmodule Bookish.BookController do
 
   def index(conn, _params) do
     books = 
-      Repo.all(Book)
+      Book.sorted_by_title 
+      |> Repo.all
       |> Circulation.set_virtual_attributes 
+    render(conn, "index.html", books: books)
+  end
+
+  def index_by_letter(conn, %{"letter" => letter}) do
+    books = 
+      Book.get_by_letter(letter)
+      |> Repo.all
+      |> Circulation.set_virtual_attributes
     render(conn, "index.html", books: books)
   end
 
