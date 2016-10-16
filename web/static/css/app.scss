@@ -12,7 +12,7 @@ $error: #E26A6A;
 $icon-height: 120px;
 $font-size: 1.5em;
 $icon-height: 120px;
-$card-highlight-color: #5EBB75; 
+$secondary-color: #5EBB75; 
 
 // Media queries
 
@@ -61,6 +61,29 @@ h1 {
 
 // Site elements
 
+.alert {
+  width: 100%;
+  color: white;
+  border-radius: 4px;
+  padding-left: $default-padding / 2;
+  p {
+    padding: $default-padding / 2;
+  }
+}
+
+.alert-danger {
+  background-color: $error;
+}
+
+
+.alert-success {
+  background-color: $secondary-color;
+}
+
+.alert-info {
+  background-color: lighten($background-color, 10%);
+}
+
 footer {
   text-align: center;
 }
@@ -93,7 +116,7 @@ footer {
   }
 }
 
-form {
+.form-container {
   @include media($medium) {
     @include outer-container($max-width / 1.5);
   }
@@ -151,7 +174,7 @@ form {
 }
 
 button {
-  background-color: $card-highlight-color;
+  background-color: $secondary-color;
   color: white;
   font-size: 1em;
   padding: $default-padding / 2;
@@ -165,7 +188,7 @@ button {
 
 .books {
   .entry.available {
-    background-color: $card-highlight-color;
+    background-color: $secondary-color;
   }
   .entry {
     background-color: lighten($background-color, 10%);
