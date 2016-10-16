@@ -25,5 +25,3 @@
 <% end %>
 
 <%= link "Back", to: circulation_path(@conn, :checked_out) %>
-
-

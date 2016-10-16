@@ -30,8 +30,9 @@ body {
 }
 
 .container {
-  @include outer-container($max-width)
-  @include pad($default-padding)
+  min-height: 85vh;
+  @include outer-container($max-width);
+  @include pad($default-padding);
 }
 
 // Typography
@@ -59,6 +60,10 @@ h1 {
 }
 
 // Site elements
+
+footer {
+  text-align: center;
+}
 
 .icon-links {
   text-align: center;

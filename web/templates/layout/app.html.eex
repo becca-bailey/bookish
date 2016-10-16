@@ -21,6 +21,7 @@
       </main>
 
     </div> <!-- /container -->
+    <%= render Bookish.SharedView, "_footer.html" %>
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>
