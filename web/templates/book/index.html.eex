@@ -1,5 +1,7 @@
 <%= render Bookish.SharedView, "_header.html", conn: @conn %>
 <h2>Where is that book?</h2>
+
+Search by title: 
 <%= for letter <- ?a..?z do %>
   <% l = char_to_string(letter) %>
   <a href="/books/starting-with/<%= l %>"><%= l %></a>
@@ -32,3 +34,7 @@
     </div>
   <% end %>
 </div>
+<br>
+<%= link to: book_path(@conn, :new) do %>
+  <i class="fa fa-plus-circle"></i> Add a book
+<% end %>
