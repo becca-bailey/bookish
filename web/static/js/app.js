@@ -19,3 +19,8 @@ import "phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 // import socket from "./socket"
+//
+$(".search-by-title").on("click", function() {
+  $(".letters").toggle();
+});
+

@@ -1,11 +1,15 @@
 <%= render Bookish.SharedView, "_header.html", conn: @conn %>
 <h2>Where is that book?</h2>
 
-Search by title: 
-<%= for letter <- ?a..?z do %>
-  <% l = char_to_string(letter) %>
-  <a href="/books/starting-with/<%= l %>"><%= l %></a>
-<% end %>
+<div class="search">
+  <h4 class="search-by-title"><i class="fa fa-search"></i> Search by title</h4>
+  <div class="letters">
+    <%= for letter <- ?a..?z do %>
+      <% l = char_to_string(letter) %>
+      <a href="/books/starting-with/<%= l %>"><%= l %></a>
+    <% end %>
+  </div>
+</div>
 
 <div class="books">
   <%= for book <- @books do %>
@@ -25,10 +29,17 @@ Search by title:
       <div class="author"><%= book.author_firstname %> <%= book.author_lastname %></div>
       <div class="location_check_out">
         <%= if book.checked_out do %>
-          Checked out by <%= book.checked_out_to %>
+          <div class="bold-text">
+            <i class="fa fa-check-circle"></i> Checked out by <%= book.checked_out_to %>
+          </div>
         <% else %>
           <%= book.current_location %>
-          <div class="check-out"><%= link("Check out", to: book_check_out_path(@conn, :new, book))%></div>
+          <div class="bold-text">
+            <%= link to: book_check_out_path(@conn, :new, book) do %>
+              <i class="fa fa-arrow-circle-right"></i>
+              Check out
+            <% end %>
+          </div>
         <% end %>
       </div>
     </div>
@@ -36,5 +47,7 @@ Search by title:
 </div>
 <br>
 <%= link to: book_path(@conn, :new) do %>
-  <i class="fa fa-plus-circle"></i> Add a book
+  <div class="bold-text">
+    <i class="fa fa-plus-circle"></i> Add a book
+  </div>
 <% end %>

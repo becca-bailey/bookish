@@ -8,11 +8,12 @@
         <h3 class="title"><%= book.title %></h3>
       </div>
       <div class="author"><%= book.author_firstname %> <%= book.author_lastname %></div>
-      <div class="location_check_out">
-        Checked out by <%= book.checked_out_to %>
-        <div class="return">
-          <%= link("Return", to: circulation_path(@conn, :return, book))%>
-        </div>
+      <div class="bold-text">
+        <i class="fa fa-check-circle"></i> Checked out by <%= book.checked_out_to %>
+        <br>
+        <%= link to: circulation_path(@conn, :return, book) do %>
+          <i class="fa fa-arrow-circle-left"></i> Return 
+        <% end %>
       </div>
     </div>
   <% end %>
