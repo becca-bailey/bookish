@@ -1,5 +1,18 @@
 <header>
-  <h1><%= link "bookish", to: page_path(@conn, :index) %></h1>
+  <div class="row">
+    <h1><%= link "bookish", to: page_path(@conn, :index) %></h1>
+    <nav class="bold-text">
+      <%= link to: book_path(@conn, :new) do %>
+        <i class="fa fa-plus-circle"></i> add
+      <% end %>
+      <%= link to: book_path(@conn, :index) do %>
+        <i class="fa fa-search"></i> look
+      <% end %>
+      <%= link to: circulation_path(@conn, :checked_out) do %>
+        <i class="fa fa-check-circle"></i> return
+      <% end %>
+    </nav>
+  </div>
   <div class="alert alert-info" role="alert">
     <%= get_flash(@conn, :info) %>
   </div>

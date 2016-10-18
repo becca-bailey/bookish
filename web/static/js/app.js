@@ -21,6 +21,6 @@ import "phoenix_html"
 // import socket from "./socket"
 //
 $(".search-by-title").on("click", function() {
-  $(".letters").toggle();
+  $(".letters").toggle('slow');
 });
 

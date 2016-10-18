@@ -66,6 +66,30 @@ h1 {
 
 // Site elements
 
+header {
+  .row {
+    @include row();
+   h1 {
+      @include media($medium) {
+        @include span-columns(5);
+      }
+    }
+  }
+}
+
+nav { 
+  @include media($medium) {
+    margin-top: 2em;
+  }
+  a {
+    text-align: center;
+    @include span-columns(4);
+  }
+  @include media($medium) {
+    @include span-columns(7)
+  }
+}
+
 .alert {
   width: 100%;
   color: white;
