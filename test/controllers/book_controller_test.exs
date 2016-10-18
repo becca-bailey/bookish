@@ -2,6 +2,7 @@ defmodule Bookish.BookControllerTest do
   use Bookish.ConnCase
 
   alias Bookish.Book
+  alias Bookish.Tag
 
   @valid_attrs %{author_firstname: "some content", author_lastname: "some content", current_location: "some content", title: "some content", year: 2016}
   @invalid_attrs %{}
@@ -53,6 +54,57 @@ defmodule Bookish.BookControllerTest do
 
     conn = get conn, book_path(conn, :index)
     assert html_response(conn, 200) =~ "available"
+  end
+
+  test "given a list of tags, each tag is associated with the book", %{conn: conn} do
+    params = %{title: "The book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: "nice, short, great"}
+    post conn, book_path(conn, :create), book: params 
+
+    assert get_first_book(Repo.get_by(Tag, text: "nice") 
+                          |> Repo.preload(:books)).title == "The book" 
+    assert get_first_book(Repo.get_by(Tag, text: "short") 
+                          |> Repo.preload(:books)).title == "The book" 
+    assert get_first_book(Repo.get_by(Tag, text: "great") 
+                          |> Repo.preload(:books)).title == "The book" 
+  end
+
+  test "the edit page for a book with tags shows the existing tags", %{conn: conn} do
+    
+    params = %{title: "The book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: "nice, short, great"}
+    post conn, book_path(conn, :create), book: params 
+    book = List.first(Repo.all(Book))
+
+    conn = get conn, book_path(conn, :edit, book)
+
+    assert html_response(conn, 200) =~ params.tags_list
+  end
+
+  test "a list of tags can be updated for a book", %{conn: conn} do
+    params = %{title: "The book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: "nice, short, great"}
+    post conn, book_path(conn, :create), book: params
+    book = List.first(Repo.all(Book))
+    updated_params = %{title: "The updated book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: "good"}
+
+    put conn, book_path(conn, :update, book), book: updated_params
+    updated_book = List.first(Repo.all(Book)) |> Repo.preload(:tags)
+
+    assert length(updated_book.tags) == 1 
+  end
+
+  test "when a book is updated with no tags, all tags are removed for that book", %{conn: conn} do
+    params = %{title: "The book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: "nice, short, great"}
+    post conn, book_path(conn, :create), book: params
+    book = List.first(Repo.all(Book))
+    updated_params = %{title: "The updated book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: ""}
+
+    put conn, book_path(conn, :update, book), book: updated_params
+    updated_book = List.first(Repo.all(Book)) |> Repo.preload(:tags)
+
+    assert length(updated_book.tags) == 0 
+  end
+  
+  defp get_first_book(tag) do 
+    List.first(tag.books)
   end
 
   test "renders form to add a new book", %{conn: conn} do

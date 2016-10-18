@@ -3,6 +3,7 @@ defmodule Bookish.BookController do
 
   alias Bookish.Book
   alias Bookish.Circulation
+  alias Bookish.Tagging
 
   def index(conn, _params) do
     books = 
@@ -29,7 +30,8 @@ defmodule Bookish.BookController do
     changeset = Book.changeset(%Book{}, book_params)
 
     case Repo.insert(changeset) do
-      {:ok, _book} ->
+      {:ok, book} ->
+        Tagging.update_tags(book, book.tags_list)
         conn
         |> put_flash(:info, "Book created successfully.")
         |> redirect(to: book_path(conn, :index))
@@ -39,7 +41,7 @@ defmodule Bookish.BookController do
   end
 
   def edit(conn, %{"id" => id}) do
-    book = Repo.get!(Book, id)
+    book = Repo.get!(Book, id) |> Repo.preload(:tags) |> Tagging.set_tags_list
     changeset = Book.changeset(book)
     render(conn, "edit.html", book: book, changeset: changeset)
   end
@@ -50,6 +52,7 @@ defmodule Bookish.BookController do
 
     case Repo.update(changeset) do
       {:ok, book} ->
+        Tagging.update_tags(book, book.tags_list)
         conn
         |> put_flash(:info, "Book updated successfully.")
         |> redirect(to: book_path(conn, :index))
