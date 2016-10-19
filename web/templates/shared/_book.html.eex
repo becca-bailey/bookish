@@ -1,0 +1,19 @@
+<div class="entry-header">
+  <div class="icons small-medium">
+    <%= render Bookish.SharedView, "_edit_delete_icons.html", conn: @conn, book: @book %>
+  </div>
+
+  <span class="title">
+    <h3><%= @book.title %></h3>
+  </span>
+
+  <span class="tags">
+    <%= render Bookish.SharedView, "_tags.html", conn: @conn, tags: @book.tags %>
+  </span>
+
+  <span class="icons large">
+    <%= render Bookish.SharedView, "_edit_delete_icons.html", conn: @conn, book: @book %>
+  </span>
+</div>
+
+<%= render Bookish.SharedView, "_book_details.html", conn: @conn, book: @book %>

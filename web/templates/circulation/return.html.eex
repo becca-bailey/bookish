@@ -25,5 +25,9 @@
     </div>
   </div>
 <% end %>
-
-<%= link "Back", to: circulation_path(@conn, :checked_out) %>
+<br>
+<%= link to: circulation_path(@conn, :checked_out) do %>
+  <div class="bold-text">
+    <i class="fa fa-arrow-left"></i> Back 
+  </div>
+<% end %>

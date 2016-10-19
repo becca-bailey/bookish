@@ -33,6 +33,6 @@ defmodule Bookish.Router do
       resources "/check_outs", CheckOutController, only: [:index, :new, :create]
     end
 
-    resources "/tags", TagController, except: [:edit, :update]
+    resources "/tags", TagController, only: [:create, :delete]
   end
 end

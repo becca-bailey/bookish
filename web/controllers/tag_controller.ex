@@ -3,16 +3,6 @@ defmodule Bookish.TagController do
 
   alias Bookish.Tag
 
-  def index(conn, _params) do
-    tags = Repo.all(Tag)
-    render(conn, "index.html", tags: tags)
-  end
-
-  def new(conn, _params) do
-    changeset = Tag.changeset(%Tag{})
-    render(conn, "new.html", changeset: changeset)
-  end
-
   def create(conn, %{"tag" => tag_params}) do
     changeset = Tag.changeset(%Tag{}, tag_params)
 
@@ -27,8 +17,9 @@ defmodule Bookish.TagController do
   end
 
   def show(conn, %{"id" => id}) do
-    tag = Repo.get!(Tag, id) |> Repo.preload(:books)
-    render(conn, "show.html", tag: tag)
+    tag = Repo.get!(Tag, id) |> Repo.preload(:books) 
+    books = tag.books |> Repo.preload(:tags)
+    render(conn, "show.html", tag: tag, books: books)
   end
 
   def delete(conn, %{"id" => id}) do

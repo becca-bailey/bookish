@@ -9,6 +9,7 @@ defmodule Bookish.BookController do
     books = 
       Book.sorted_by_title 
       |> Repo.all
+      |> Repo.preload(:tags)
       |> Circulation.set_virtual_attributes 
     render(conn, "index.html", books: books)
   end
@@ -17,6 +18,7 @@ defmodule Bookish.BookController do
     books = 
       Book.get_by_letter(letter)
       |> Repo.all
+      |> Repo.preload(:tags)
       |> Circulation.set_virtual_attributes
     render(conn, "index.html", books: books)
   end

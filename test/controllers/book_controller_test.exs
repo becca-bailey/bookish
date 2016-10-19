@@ -102,6 +102,30 @@ defmodule Bookish.BookControllerTest do
 
     assert length(updated_book.tags) == 0 
   end
+
+  test "tags for each book are displayed on the books index page", %{conn: conn} do
+    params = %{title: "The book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: "nice, short, great"}
+    post conn, book_path(conn, :create), book: params
+
+    conn = get conn, book_path(conn, :index)
+
+    assert html_response(conn, 200) =~ "nice"
+    assert html_response(conn, 200) =~ "short"
+    assert html_response(conn, 200) =~ "great"
+  end
+
+  test "each tag displayed on the index page is a link to its show page", %{conn: conn} do
+    params = %{title: "The book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: "nice, short, great"}
+    
+    post conn, book_path(conn, :create), book: params
+
+    conn = get conn, book_path(conn, :index)
+    book = List.first(Repo.all(Book)) |> Repo.preload(:tags)
+
+    Enum.each(book.tags, fn(tag) ->
+      assert html_response(conn, 200) =~ "/books/tags/#{tag.id}"
+    end)
+  end
   
   defp get_first_book(tag) do 
     List.first(tag.books)
