@@ -10,8 +10,10 @@ defmodule Bookish.Book do
     field :current_location, :string
     field :checked_out, :boolean, virtual: true, default: false
     field :checked_out_to, :string, virtual: true
+    field :tags_list, :string, virtual: true
 
     has_many :check_outs, Bookish.CheckOut
+    many_to_many :tags, Bookish.Tag, join_through: Bookish.BookTag, on_delete: :delete_all, on_replace: :delete
 
     timestamps()
   end
@@ -21,7 +23,7 @@ defmodule Bookish.Book do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:title, :author_firstname, :author_lastname, :year, :current_location])
+    |> cast(params, [:title, :author_firstname, :author_lastname, :year, :current_location, :tags_list])
     |> validate_required([:title, :author_firstname, :author_lastname, :year])
     |> validate_number(:year, greater_than_or_equal_to: 1000, less_than_or_equal_to: 9999, message: "Must be a valid year")
   end
@@ -36,6 +38,11 @@ defmodule Bookish.Book do
     struct 
     |> cast(params, [:current_location])
     |> validate_required([:current_location])
+  end
+
+  def tags(struct, params \\ %{}) do
+    struct
+    |> cast(params, [:tags_list])
   end
   
   def sorted_by_title do

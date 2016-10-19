@@ -20,6 +20,8 @@ defmodule Bookish.Router do
     get "/:id/return", Circulation, :return, as: :circulation
     post "/:id/return", Circulation, :process_return, as: :circulation
     put "/:id/return", Circulation, :process_return, as: :circulation
+    
+    resources "/tags", TagController, only: [:show], as: :books_tag
   end
 
   scope "/", Bookish do
@@ -30,5 +32,7 @@ defmodule Bookish.Router do
     resources "/books", BookController, except: [:show] do
       resources "/check_outs", CheckOutController, only: [:index, :new, :create]
     end
+
+    resources "/tags", TagController, only: [:create, :delete]
   end
 end

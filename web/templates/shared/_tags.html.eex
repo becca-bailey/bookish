@@ -1,0 +1,7 @@
+<%= for tag <- @tags do %>
+  <%= link to: books_tag_path(@conn, :show, tag) do %>
+    <div class="tag">
+      <%= tag.text %>
+    </div>
+  <% end %>
+<% end %>

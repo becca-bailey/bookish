@@ -14,6 +14,7 @@ $font-size: 1.5em;
 $icon-height: 120px;
 $secondary-color: #5EBB75;
 $border-radius: 10px;
+$small-border-radius: 4px;
 
 // Media queries
 
@@ -94,7 +95,6 @@ nav {
   width: 100%;
   color: white;
   border-radius: 4px;
-  padding-left: $default-padding / 2;
   p {
     padding: $default-padding / 2;
   }
@@ -102,15 +102,6 @@ nav {
 
 .alert-danger {
   background-color: $error;
-}
-
-
-.alert-success {
-  background-color: $secondary-color;
-}
-
-.alert-info {
-  background-color: lighten($background-color, 10%);
 }
 
 footer {
@@ -122,7 +113,7 @@ footer {
   .box {
     @include pad($default-padding);
     border-radius: $border-radius;
-    &:hover, &:active {
+    &:hover {
       background-color: lighten($background-color, 5%);
     }
     p {
@@ -233,11 +224,16 @@ button {
     padding: $default-padding / 2;
     margin-top: $default-margin;
     .title {
-      margin: 0;
+      h3 {
+        display: inline;
+        margin: 0;
+      }
     }
     .entry-header {
-      .icons {
+      .icons.large {
         float: right;
+      }.icons.small {
+        font-size: 1.25em;
       }
       form {
         display: inline-block;
@@ -266,3 +262,40 @@ button {
 .bold-text {
   font-weight: 700;
 }
+
+$tag-color: #674172;
+.tags {
+  position: relative;
+  bottom: 2px;
+  margin-left: 5px;
+}
+
+.tag {
+  display: inline;
+  background-color: $tag-color;
+  border-radius: $small-border-radius;
+  padding: 3px 5px;
+  font-weight: 700;
+  margin-right: 5px;
+  font-size: .75em;
+  &:hover {
+    background-color: lighten($tag-color, 10%);
+  }
+}
+
+// Helpers
+
+.small-medium {
+  @include media($large) {
+    display: none
+  }
+}
+
+.large {
+  display: none;
+  @include media($large) {
+    display: block;
+  }
+}
+
+
