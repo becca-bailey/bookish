@@ -4,4 +4,8 @@
 <%= render "form.html", changeset: @changeset,
                         action: book_check_out_path(@conn, :create, @conn.assigns[:book]) %>
 
-<%= link "Back", to: book_path(@conn, :index) %>
+<%= link to: book_path(@conn, :index) do %>
+  <div class="bold-text">
+    <i class="fa fa-arrow-left"></i> Back 
+  </div>
+<% end %>
