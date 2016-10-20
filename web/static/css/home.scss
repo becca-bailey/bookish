@@ -1,0 +1,49 @@
+@import "variables";
+@import "bourbon/bourbon";
+@import "neat/neat";
+
+#main-title {
+  text-align: center;
+  margin: 0;
+  font-size: modular-scale(3);
+  @include media($medium) {
+    font-size: modular-scale(4);
+    margin: $default-margin;
+  }
+}
+
+.icon-links {
+  text-align: center;
+  .box {
+    @include pad($default-padding);
+    border-radius: $border-radius;
+    &:hover {
+      background-color: lighten($background-color, 5%);
+    }
+    p {
+      font-weight: 700;
+      text-transform: lowercase;
+    }
+    @include media($medium) {
+      @include span-columns(4);
+    }
+    div {
+      height: $icon-height;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      @include media($large) {
+        height: $icon-height * 1.5;
+      }
+    }
+    .add {
+      background-image: url("/images/add.png");
+    }
+    .look {
+      background-image: url("/images/look.png");
+    }
+    .return {
+      background-image: url("/images/return.png");
+    }
+  }
+}

@@ -1,0 +1,73 @@
+@import "bourbon/bourbon";
+@import "neat/neat";
+@import "variables";
+
+.form-container {
+  @include media($medium) {
+    @include outer-container($max-width / 1.5);
+  }
+}
+
+.form-group {
+  @include row;
+  @include outer-container;
+  label {
+    @include media($medium) {
+      @include span-columns(4);
+      text-align: right;
+    }
+  }
+  input {
+    font-size: .75em;
+    width: 100%;
+    border: 1px solid $gray;
+    padding: $default-padding / 2;
+    border-radius: 4px;
+    line-height: 1.5em;
+    @include media($medium) {
+      @include span-columns(8);
+    }
+  }
+  .input-group {
+    @include media($medium) {
+      @include span-columns(8);
+    }
+    width: 100%;
+    input {
+      @include span-columns(6);
+    }
+  }
+}
+.form-error {
+  color: $error;
+  font-weight: 700;
+  font-size: .75em;
+  min-height: 30px;
+  @include media($medium) {
+    @include span-columns(8);
+    @include shift-in-context(4);
+  }
+}
+.form-error.error-group {
+  span {
+    @include span-columns(6);
+  }
+}
+
+.submit {
+  text-align: center;
+  margin-top: $default-margin;
+}
+
+button {
+  background-color: $secondary-color;
+  color: white;
+  font-size: 1em;
+  padding: $default-padding / 2;
+  border-radius: 4px;
+  border: none;
+  width: 100%;
+  @include media($medium) {
+    width: 200px;
+  }
+}

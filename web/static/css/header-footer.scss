@@ -1,0 +1,44 @@
+@import "variables";
+@import "bourbon/bourbon";
+@import "neat/neat";
+
+header {
+  .row {
+    @include row();
+   h1 {
+      @include media($medium) {
+        @include span-columns(5);
+      }
+    }
+  }
+}
+
+nav { 
+  @include media($medium) {
+    margin-top: 2em;
+  }
+  a {
+    text-align: center;
+    @include span-columns(4);
+  }
+  @include media($medium) {
+    @include span-columns(7)
+  }
+}
+
+.alert {
+  width: 100%;
+  color: white;
+  border-radius: 4px;
+  p {
+    padding: $default-padding / 2;
+  }
+}
+
+.alert-danger {
+  background-color: $error;
+}
+
+footer {
+  text-align: center;
+}
