@@ -19,15 +19,23 @@
 }
 
 .entry-header {
+  @include row();
   form {
     display: inline-block;
   }
 }
 
+.title-content {
+  @include span-columns(11);
+}
+
 .icons.large {
   float: right;
-}.icons.small {
+}.icons.small-medium {
   font-size: 1.25em;
+  @include media($medium) {
+    font-size: 1em;
+  }
 }
 
 .search {
@@ -50,7 +58,6 @@
 .tags, .location {
   position: relative;
   bottom: 2px;
-  margin-left: 5px;
 }
 
 .location {
