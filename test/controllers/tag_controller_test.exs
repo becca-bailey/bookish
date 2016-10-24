@@ -69,7 +69,7 @@ defmodule Bookish.TagControllerTest do
     refute tag |> Repo.preload(:books) |> has_books
   end
 
-  test "the tag index route shows a list of books with that tag", %{conn: conn} do
+  test "the tag show route shows a list of books with that tag", %{conn: conn} do
     book = Repo.insert!(%Book{title: "Tagged book"})
     tag = Repo.insert!(%Tag{text: "tag"})
     

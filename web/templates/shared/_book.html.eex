@@ -2,13 +2,24 @@
   <div class="icons small-medium">
     <%= render Bookish.SharedView, "_edit_delete_icons.html", conn: @conn, book: @book %>
   </div>
+  <span class="title-content">
+    <span class="title">
+      <h3><%= @book.title %></h3>
+    </span>
+    
+    <%= if @book.location do %>
+      <span class="location">
+        <%= link to: books_location_path(@conn, :show, @book.location) do %>
+          <div class="tag">
+            <%= @book.location.name %>
+          </div>
+        <% end %>
+      </span>
+    <% end %>
 
-  <span class="title">
-    <h3><%= @book.title %></h3>
-  </span>
-
-  <span class="tags">
-    <%= render Bookish.SharedView, "_tags.html", conn: @conn, tags: @book.tags %>
+    <span class="tags">
+      <%= render Bookish.SharedView, "_tags.html", conn: @conn, tags: @book.tags %>
+    </span>
   </span>
 
   <span class="icons large">

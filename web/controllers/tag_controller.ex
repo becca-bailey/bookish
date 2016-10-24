@@ -18,7 +18,10 @@ defmodule Bookish.TagController do
 
   def show(conn, %{"id" => id}) do
     tag = Repo.get!(Tag, id) |> Repo.preload(:books) 
-    books = tag.books |> Repo.preload(:tags)
+    books = 
+      tag.books 
+      |> Repo.preload(:tags) 
+      |> Repo.preload(:location)
     render(conn, "show.html", tag: tag, books: books)
   end
 
