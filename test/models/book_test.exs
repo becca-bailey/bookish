@@ -2,8 +2,9 @@ defmodule Bookish.BookTest do
   use Bookish.ModelCase
 
   alias Bookish.Book
+  alias Bookish.Location
 
-  @valid_attrs %{author_firstname: "first name", author_lastname: "last name", current_location: "current location", title: "title", year: 2016}
+  @valid_attrs %{author_firstname: "first name", author_lastname: "last name", current_location: "current location", title: "title", year: 2016, location_id: 1}
   @invalid_attrs %{}
 
   test "changeset with valid attributes" do
@@ -50,25 +51,36 @@ defmodule Bookish.BookTest do
     assert book.checked_out
   end
 
-  @tag :checkout
   test "current_location must be an empty string" do
     attributes = %{current_location: "location"}
     changeset = Book.checkout(%Book{}, attributes)
     refute changeset.valid?
   end
   
-  @tag :return
   test "return is valid with current_location" do
     attributes = %{current_location: "location"}
     changeset = Book.return(%Book{}, attributes)
     assert changeset.valid?
   end
 
-  @tag :return
   test "current location must not be an empty string" do
     attributes = %{current_location: ""}
     changeset = Book.return(%Book{}, attributes)
     refute changeset.valid?
+  end
+
+  test "a book has a location" do
+    location = Repo.insert! %Location{name: "Chicago"}
+    book = Repo.insert! %Book{}
+   
+    updated_book =  
+      book
+      |> Repo.preload(:location)
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_assoc(:location, location)
+      |> Repo.update!
+    
+    assert updated_book.location.name == "Chicago"
   end
 
   test "sorted_by_title query returns a list of books sorted by title" do

@@ -7,6 +7,7 @@ defmodule Bookish.Repo.Migrations.CreateBook do
       add :author_firstname, :string
       add :author_lastname, :string
       add :year, :integer
+      add :location_id, :integer
       add :current_location, :string
 
       timestamps()

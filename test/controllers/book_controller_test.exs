@@ -4,7 +4,7 @@ defmodule Bookish.BookControllerTest do
   alias Bookish.Book
   alias Bookish.Tag
 
-  @valid_attrs %{author_firstname: "some content", author_lastname: "some content", current_location: "some content", title: "some content", year: 2016}
+  @valid_attrs %{author_firstname: "some content", author_lastname: "some content", current_location: "some content", title: "some content", year: 2016, location_id: 1}
   @invalid_attrs %{}
 
   test "lists all books on index", %{conn: conn} do

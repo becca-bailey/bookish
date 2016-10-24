@@ -35,8 +35,16 @@
     </div>
 
     <div class="form-group">
-      <%= label f, :current_location, class: "control-label" %>
-      <%= text_input f, :current_location, class: "form-control", placeholder: "Chicago 10th floor" %>
+      <%= label f, "Office", class: "control-label" %>
+      <%= select f, :location_id, @locations, class: "form-control" %>
+    </div>
+    <div class="form-error">
+      <%= error_tag f, :location_id %>
+    </div>
+
+    <div class="form-group">
+      <%= label f, "Location details", class: "control-label" %>
+      <%= text_input f, :current_location, class: "form-control", placeholder: "10th floor" %>
     </div>
     <div class="form-error">
       <%= error_tag f, :current_location %>

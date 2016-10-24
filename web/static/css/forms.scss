@@ -11,33 +11,36 @@
 .form-group {
   @include row;
   @include outer-container;
-  label {
-    @include media($medium) {
-      @include span-columns(4);
-      text-align: right;
-    }
-  }
-  input {
-    font-size: .75em;
-    width: 100%;
-    border: 1px solid $gray;
-    padding: $default-padding / 2;
-    border-radius: 4px;
-    line-height: 1.5em;
-    @include media($medium) {
-      @include span-columns(8);
-    }
-  }
-  .input-group {
-    @include media($medium) {
-      @include span-columns(8);
-    }
-    width: 100%;
-    input {
-      @include span-columns(6);
-    }
+}
+
+label {
+  @include media($medium) {
+    @include span-columns(4);
+    text-align: right;
   }
 }
+
+input, select {
+  font-size: .75em;
+  width: 100%;
+  border: 1px solid $gray;
+  padding: $default-padding / 2;
+  border-radius: 4px;
+  line-height: 1.5em;
+  @include media($medium) {
+    @include span-columns(8);
+  }
+}
+.input-group {
+  @include media($medium) {
+    @include span-columns(8);
+  }
+  width: 100%;
+  input {
+    @include span-columns(6);
+  }
+}
+
 .form-error {
   color: $error;
   font-weight: 700;

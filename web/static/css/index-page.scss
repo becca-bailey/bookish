@@ -16,15 +16,25 @@
   &.available {
     background-color: $secondary-color;
   }
-  .entry-header {
-    .icons.large {
-      float: right;
-    }.icons.small {
-      font-size: 1.25em;
-    }
-    form {
-      display: inline-block;
-    }
+}
+
+.entry-header {
+  @include row();
+  form {
+    display: inline-block;
+  }
+}
+
+.title-content {
+  @include span-columns(11);
+}
+
+.icons.large {
+  float: right;
+}.icons.small-medium {
+  font-size: 1.25em;
+  @include media($medium) {
+    font-size: 1em;
   }
 }
 
@@ -45,15 +55,26 @@
   border-radius: $border-radius;
 }
 
-.tags {
+.tags, .location {
   position: relative;
   bottom: 2px;
-  margin-left: 5px;
+}
+
+.location {
+  .tag {
+    background-color: #EF4836;
+  }
+}
+
+.tags {
+  .tag {
+    background-color: $tag-color;
+  }
 }
 
 .tag {
+  white-space: nowrap;
   display: inline;
-  background-color: $tag-color;
   border-radius: $small-border-radius;
   padding: 3px 5px;
   font-weight: 700;
