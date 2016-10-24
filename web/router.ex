@@ -22,6 +22,7 @@ defmodule Bookish.Router do
     put "/:id/return", Circulation, :process_return, as: :circulation
     
     resources "/tags", TagController, only: [:show], as: :books_tag
+    resources "/locations", LocationController, only: [:show], as: :books_location
   end
 
   scope "/", Bookish do
@@ -34,5 +35,6 @@ defmodule Bookish.Router do
     end
 
     resources "/tags", TagController, only: [:create, :delete]
+    resources "/locations", LocationController
   end
 end
