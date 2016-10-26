@@ -4,7 +4,8 @@ defmodule Bookish.CheckOut do
   alias Bookish.Circulation
 
   schema "check_outs" do
-    field :checked_out_to, :string
+    field :borrower_name, :string
+    field :borrower_id, :string
     field :return_date, Ecto.Date
     timestamps()
 
@@ -16,8 +17,8 @@ defmodule Bookish.CheckOut do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:book_id, :checked_out_to])
-    |> validate_required([:book_id, :checked_out_to])
+    |> cast(params, [:book_id, :borrower_name, :borrower_id])
+    |> validate_required([:book_id, :borrower_name, :borrower_id])
     |> validate_not_checked_out
   end
 

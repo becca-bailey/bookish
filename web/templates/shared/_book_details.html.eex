@@ -1,7 +1,7 @@
 <div class="author"><%= @book.author_firstname %> <%= @book.author_lastname %></div>
 <%= if @book.checked_out do %>
   <div class="bold-text">
-    <i class="fa fa-check-circle"></i> Checked out by <%= @book.checked_out_to %>
+    <i class="fa fa-check-circle"></i> Checked out by <%= @book.borrower_name %>
   </div>
 <% else %>
   <%= @book.current_location %>

@@ -3,7 +3,7 @@ defmodule Bookish.CheckOutControllerTest do
 
   alias Bookish.CheckOut
   alias Bookish.Book
-  @user %{id: 1, name: "user"}
+  @user %{id: "email", name: "user"}
   @valid_attrs %{"book_id": 1}
   @invalid_attrs %{}
   
@@ -29,7 +29,7 @@ defmodule Bookish.CheckOutControllerTest do
   test "does not create a new check-out record if a book is already checked out", %{conn: conn} do
     book = Repo.insert! %Book{}
     check_out = 
-      Ecto.build_assoc(book, :check_outs, checked_out_to: "Person")
+      Ecto.build_assoc(book, :check_outs, borrower_name: "Person")
 
     Repo.insert!(check_out)
     

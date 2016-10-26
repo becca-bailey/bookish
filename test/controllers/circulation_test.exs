@@ -1,14 +1,14 @@
 defmodule Bookish.CirculationTest do
   use Bookish.ConnCase
 
-  alias Bookish.Circulation 
+  alias Bookish.Circulation
   alias Bookish.Book
   alias Bookish.CheckOut
   alias Bookish.TestHelpers, as: Helpers
 
   @book_attrs %{author_firstname: "some content", author_lastname: "some content", current_location: "some content", title: "some content", year: 2016}
 
-  @user %{id: 1, name: "user"}
+  @user %{id: "email", name: "name"}
 
   test "renders checked_out page", %{conn: conn} do
     conn = get conn, "/books/checked_out"
@@ -17,8 +17,10 @@ defmodule Bookish.CirculationTest do
 
   test "shows a form to return a book", %{conn: conn} do
     book = Repo.insert! %Book{}
+    Ecto.build_assoc(book, :check_outs, borrower_name: "Person", borrower_id: @user.id)
+    |> Repo.insert!
 
-    conn = 
+    conn =
       conn
       |> assign(:current_user, @user)
       |> get(circulation_path(conn, :return, book))
@@ -26,8 +28,21 @@ defmodule Bookish.CirculationTest do
     assert conn.status == 200
   end
 
+  test "only a user with a matching id can return a book", %{conn: conn} do
+    book = Repo.insert! %Book{}
+    Ecto.build_assoc(book, :check_outs, borrower_name: "Person", borrower_id: "different email")
+    |> Repo.insert!
+
+    conn = 
+      conn
+      |> assign(:current_user, @user)
+      |> get(circulation_path(conn, :return, book))
+
+     assert redirected_to(conn) == "/books"
+  end
+
    test "does not allow a non-logged-in user to return a book" do
-     book = Repo.insert! %Book{}  
+     book = Repo.insert! %Book{}
 
      conn = get build_conn, circulation_path(build_conn, :return, book)
 
@@ -35,11 +50,11 @@ defmodule Bookish.CirculationTest do
    end
 
   test "checked_out renders only books that are checked out", %{conn: conn} do
-    checked_out_book = Repo.insert! %Book{title: "This book is checked out"}  
+    checked_out_book = Repo.insert! %Book{title: "This book is checked out"}
     Repo.insert! %Book{title: "This book is not checked out"}
 
-    check_out = 
-      Ecto.build_assoc(checked_out_book, :check_outs, checked_out_to: "Person")
+    check_out =
+      Ecto.build_assoc(checked_out_book, :check_outs, borrower_name: "Person")
     Repo.insert!(check_out)
 
     conn = get conn, circulation_path(conn, :checked_out)
@@ -48,10 +63,10 @@ defmodule Bookish.CirculationTest do
   end
 
   test "checked_out displays the name of the person who has checked out the book", %{conn: conn} do
-    checked_out_book = Repo.insert! %Book{title: "This book is checked out"}  
+    checked_out_book = Repo.insert! %Book{title: "This book is checked out"}
 
-    check_out = 
-      Ecto.build_assoc(checked_out_book, :check_outs, checked_out_to: "Becca")
+    check_out =
+      Ecto.build_assoc(checked_out_book, :check_outs, borrower_name: "Becca")
     Repo.insert!(check_out)
 
     conn = get conn, circulation_path(conn, :checked_out)
@@ -60,33 +75,33 @@ defmodule Bookish.CirculationTest do
   end
 
   test "checked_out? returns false if no check_out record exists for the book" do
-    book = Repo.insert! %Book{} 
+    book = Repo.insert! %Book{}
 
     refute Circulation.checked_out?(book)
   end
-  
+
   test "checked_out? returns true if a check_out record exists for the book" do
     book = Repo.insert! %Book{}
-    check_out = 
-      Ecto.build_assoc(book, :check_outs, checked_out_to: "Person")
+    check_out =
+      Ecto.build_assoc(book, :check_outs, borrower_name: "Person")
     Repo.insert!(check_out)
 
-    assert Circulation.checked_out?(book) 
+    assert Circulation.checked_out?(book)
   end
 
-  test "checked_out_to returns the name of the person the book is checked out to" do
+  test "borrower_name returns the name of the person the book is checked out to" do
     book = Repo.insert! %Book{}
-    check_out = 
-      Ecto.build_assoc(book, :check_outs, checked_out_to: "Person")
+    check_out =
+      Ecto.build_assoc(book, :check_outs, borrower_name: "Person")
     Repo.insert!(check_out)
 
-    assert Circulation.checked_out_to(book) == "Person"
+    assert Circulation.borrower_name(book) == "Person"
   end
 
-  test "checked_out_to returns nil if the book is currently available" do
+  test "borrower_name returns nil if the book is currently available" do
     book = Repo.insert! %Book{}
 
-    assert is_nil(Circulation.checked_out_to(book))
+    assert is_nil(Circulation.borrower_name(book))
   end
 
   test "set virtual attributes returns an unchanged collection of books if no books are checked out" do
@@ -98,66 +113,66 @@ defmodule Bookish.CirculationTest do
 
   test "get_book_with_location updates the current location and returns the changed book", %{conn: conn} do
     book = Repo.insert! %Book{"current_location": "A place"}
-    conn = post conn, book_check_out_path(conn, :create, book), check_out: %{"checked_out_to": "Person"} 
+    conn = post conn, book_check_out_path(conn, :create, book), check_out: %{"borrower_name": "Person"}
     updated_book = Circulation.get_book_with_location(conn)
 
-    assert is_nil(updated_book.current_location) 
+    assert is_nil(updated_book.current_location)
   end
 
   test "if a check-out record exists for a book in the collection, it returns an updated collection" do
     book = Repo.insert! %Book{}
     coll = [book]
-    check_out = 
-      Ecto.build_assoc(book, :check_outs, checked_out_to: "Person")
+    check_out =
+      Ecto.build_assoc(book, :check_outs, borrower_name: "Person")
     Repo.insert!(check_out)
     updated_coll = Circulation.set_virtual_attributes(coll)
 
     assert List.first(updated_coll).checked_out == true
-    assert List.first(updated_coll).checked_out_to == "Person"
+    assert List.first(updated_coll).borrower_name == "Person"
   end
 
   test "checked out books returns an empty list if no books are checked out" do
     Repo.insert! %Book{}
-    
-    assert Helpers.empty? Circulation.get_checked_out(Book) |> Repo.all 
+
+    assert Helpers.empty? Circulation.get_checked_out(Book) |> Repo.all
   end
 
   test "get_checked_out queries resources that are checked out" do
     book = Repo.insert! %Book{}
-    check_out = 
-      Ecto.build_assoc(book, :check_outs, checked_out_to: "Person")
+    check_out =
+      Ecto.build_assoc(book, :check_outs, borrower_name: "Person")
     Repo.insert!(check_out)
-    
+
     assert List.first(Circulation.get_checked_out(Book) |> Repo.all) == book
   end
 
   test "get_checked_out returns an empty collection if there are no books to query" do
     assert Helpers.empty? Circulation.get_checked_out(Book) |> Repo.all
   end
-  
+
   test "updates the current location when returning a book with a valid location", %{conn: conn} do
-    book = Repo.insert! %Book{}  
+    book = Repo.insert! %Book{}
     location = "Chicago"
 
-    check_out = 
-      Ecto.build_assoc(book, :check_outs, checked_out_to: "Person")
+    check_out =
+      Ecto.build_assoc(book, :check_outs, borrower_name: "Person")
     Repo.insert!(check_out)
 
-    conn = 
+    conn =
       conn
       |> assign(:current_user, @user)
       |> post(circulation_path(conn, :process_return, book), book: %{current_location: location})
 
     assert redirected_to(conn) == book_path(conn, :index)
-    assert Repo.get(Book, book.id).current_location == location 
+    assert Repo.get(Book, book.id).current_location == location
   end
 
   test "adds a return date to a check_out record when returning a book", %{conn: conn} do
-    book = Repo.insert! %Book{}  
+    book = Repo.insert! %Book{}
     location = "Chicago"
 
-    check_out = 
-      Ecto.build_assoc(book, :check_outs, checked_out_to: "Person")
+    check_out =
+      Ecto.build_assoc(book, :check_outs, borrower_name: "Person")
       |> Repo.insert!
 
     conn
@@ -169,7 +184,7 @@ defmodule Bookish.CirculationTest do
 
   test "once a book is returned, it is no longer checked out", %{conn: conn} do
     book = Repo.insert! %Book{}
-    Ecto.build_assoc(book, :check_outs, checked_out_to: "Person")
+    Ecto.build_assoc(book, :check_outs, borrower_name: "Person")
     |> Repo.insert!
 
     assert Circulation.set_attributes(book).checked_out
@@ -177,8 +192,7 @@ defmodule Bookish.CirculationTest do
     conn
     |> assign(:current_user, @user)
     |> post(circulation_path(conn, :process_return, book), book: %{current_location: "Chicago"})
-    
+
     refute Circulation.set_attributes(book).checked_out
   end
 end
-

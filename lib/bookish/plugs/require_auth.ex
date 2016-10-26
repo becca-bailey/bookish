@@ -8,6 +8,7 @@ defmodule Bookish.Plugs.RequireAuth do
       nil ->
         conn
         |> put_session(:redirect_url, conn.request_path)
+        |> put_session(:redirect_method, conn.method)
         |> Phoenix.Controller.put_flash(:info, "Please log in to continue.")
         |> Phoenix.Controller.redirect(to: "/")
         |> halt

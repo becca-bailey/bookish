@@ -14,7 +14,7 @@ defmodule Bookish.CheckOutController do
 
   def create(conn, data) do
     user = get_user(conn)
-    check_out_params = Map.merge(data, %{"checked_out_to" => user.name})
+    check_out_params = Map.merge(data, %{"borrower_name" => user.name, "borrower_id" => user.id})
     changeset = 
       conn
       |> Circulation.get_book_with_location

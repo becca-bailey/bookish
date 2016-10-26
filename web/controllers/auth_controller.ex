@@ -25,12 +25,22 @@ defmodule Bookish.AuthController do
   def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
     case User.find_or_create(auth) do
       {:ok, user} ->
-        path = get_session(conn, :redirect_url) || "/"
+        path = get_path(conn)
         conn
         |> put_flash(:info, "Authentication successful.")
         |> put_session(:current_user, user)
         |> redirect(to: path)
     end
   end
+
+  defp get_path(conn) do
+    if get_session(conn, :redirect_method) == "POST" do
+      "/books"
+    else
+      get_session(conn, :redirect_url) || "/"
+    end
+  end
+    
+    
 end
 

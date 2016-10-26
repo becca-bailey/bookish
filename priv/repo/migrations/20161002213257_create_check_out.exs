@@ -4,7 +4,8 @@ defmodule Bookish.Repo.Migrations.CreateCheckOut do
   def change do
     create table(:check_outs) do
       add :book_id, :integer
-      add :checked_out_to, :string
+      add :borrower_id, :string
+      add :borrower_name, :string
       add :return_date, :date
 
       timestamps()

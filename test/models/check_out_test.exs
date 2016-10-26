@@ -4,10 +4,10 @@ defmodule Bookish.CheckOutTest do
   alias Bookish.CheckOut
   alias Bookish.Book
 
-  @valid_attrs %{checked_out_to: "A person", book_id: 1}
+  @valid_attrs %{borrower_name: "A person", book_id: 1, borrower_id: "email"}
   @invalid_attrs %{}
 
-  test "check-out is valid with checked_out_to and book_id" do
+  test "check-out is valid with borrower_name and book_id" do
     changeset = CheckOut.changeset(%CheckOut{}, @valid_attrs)
     assert changeset.valid?
   end
@@ -33,7 +33,7 @@ defmodule Bookish.CheckOutTest do
   test "current will return an entry for a single book that is checked out" do
     book = Repo.insert! %Book{}
     association =
-      Ecto.build_assoc(book, :check_outs, checked_out_to: "Person")
+      Ecto.build_assoc(book, :check_outs, borrower_name: "Person")
     check_out = Repo.insert!(association)
     current_check_out = List.first(CheckOut.current(CheckOut, book.id) |> Repo.all)
 
