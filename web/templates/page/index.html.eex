@@ -1,4 +1,16 @@
 <h1 id="main-title">Bookish</h1>
+
+<div class="alert alert-info" role="alert">
+  <%= get_flash(@conn, :info) %>
+</div>
+<div class="alert alert-danger" role="alert">
+  <%= get_flash(@conn, :error) %>
+</div>
+
+<a href="/auth/slack">
+  <img alt="Sign in with Slack" height="40" width="172" src="https://platform.slack-edge.com/img/sign_in_with_slack.png" srcset="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x" />
+</a>
+
 <div class="icon-links">
   <div class="box">
     <a href=<%= book_path(@conn, :new) %>>
