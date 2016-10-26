@@ -8,6 +8,8 @@ defmodule Bookish.CirculationTest do
 
   @book_attrs %{author_firstname: "some content", author_lastname: "some content", current_location: "some content", title: "some content", year: 2016}
 
+  @user %{id: 1, name: "user"}
+
   test "renders checked_out page", %{conn: conn} do
     conn = get conn, "/books/checked_out"
     assert conn.status == 200
@@ -15,9 +17,22 @@ defmodule Bookish.CirculationTest do
 
   test "shows a form to return a book", %{conn: conn} do
     book = Repo.insert! %Book{}
-    conn = get conn, circulation_path(conn, :return, book)
+
+    conn = 
+      conn
+      |> assign(:current_user, @user)
+      |> get(circulation_path(conn, :return, book))
+
     assert conn.status == 200
   end
+
+   test "does not allow a non-logged-in user to return a book" do
+     book = Repo.insert! %Book{}  
+
+     conn = get build_conn, circulation_path(build_conn, :return, book)
+
+     assert redirected_to(conn) == "/"
+   end
 
   test "checked_out renders only books that are checked out", %{conn: conn} do
     checked_out_book = Repo.insert! %Book{title: "This book is checked out"}  
@@ -128,7 +143,10 @@ defmodule Bookish.CirculationTest do
       Ecto.build_assoc(book, :check_outs, checked_out_to: "Person")
     Repo.insert!(check_out)
 
-    conn = post conn, circulation_path(conn, :process_return, book), book: %{current_location: location}
+    conn = 
+      conn
+      |> assign(:current_user, @user)
+      |> post(circulation_path(conn, :process_return, book), book: %{current_location: location})
 
     assert redirected_to(conn) == book_path(conn, :index)
     assert Repo.get(Book, book.id).current_location == location 
@@ -142,7 +160,10 @@ defmodule Bookish.CirculationTest do
       Ecto.build_assoc(book, :check_outs, checked_out_to: "Person")
       |> Repo.insert!
 
-    post conn, circulation_path(conn, :process_return, book), book: %{current_location: location}
+    conn
+    |> assign(:current_user, @user)
+    |> post(circulation_path(conn, :process_return, book), book: %{current_location: location})
+
     assert Repo.get(CheckOut, check_out.id).return_date
   end
 
@@ -153,7 +174,9 @@ defmodule Bookish.CirculationTest do
 
     assert Circulation.set_attributes(book).checked_out
 
-    post conn, circulation_path(conn, :process_return, book), book: %{current_location: "Chicago"}
+    conn
+    |> assign(:current_user, @user)
+    |> post(circulation_path(conn, :process_return, book), book: %{current_location: "Chicago"})
     
     refute Circulation.set_attributes(book).checked_out
   end

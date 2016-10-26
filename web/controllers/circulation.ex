@@ -2,6 +2,8 @@ defmodule Bookish.Circulation do
   use Bookish.Web, :controller
   import Ecto.Query
 
+  plug Bookish.Plugs.RequireAuth when action in [:check_out, :return, :process_return]
+
   alias Bookish.Book
   alias Bookish.CheckOut
 

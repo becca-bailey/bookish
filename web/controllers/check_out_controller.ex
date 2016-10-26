@@ -2,6 +2,7 @@ defmodule Bookish.CheckOutController do
   use Bookish.Web, :controller
   
   plug :assign_book
+  plug Bookish.Plugs.RequireAuth when action in [:new, :create]
 
   alias Bookish.CheckOut
   alias Bookish.Circulation
