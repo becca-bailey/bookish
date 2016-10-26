@@ -63,7 +63,9 @@ defmodule Bookish.TagControllerTest do
 
     assert(tag |> Repo.preload(:books) |> has_books)
 
-    delete conn, book_path(conn, :delete, book)
+    conn
+    |> assign(:current_user, %{id: 1, name: "user"})
+    |> delete(book_path(conn, :delete, book))
 
     assert tag
     refute tag |> Repo.preload(:books) |> has_books
