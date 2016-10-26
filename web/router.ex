@@ -1,5 +1,6 @@
 defmodule Bookish.Router do
   use Bookish.Web, :router
+  require Ueberauth
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -25,6 +26,15 @@ defmodule Bookish.Router do
     resources "/locations", LocationController, only: [:show], as: :books_location
   end
 
+  scope "/auth", Bookish do
+    pipe_through :browser
+
+    get "/:provider", AuthController, :request
+    get "/:provider/callback", AuthController, :callback
+    post "/:provider/callback", AuthController, :callback
+    delete "/logout", AuthController, :delete
+  end
+
   scope "/", Bookish do
     pipe_through :browser 
 
@@ -36,5 +46,6 @@ defmodule Bookish.Router do
 
     resources "/tags", TagController, only: [:create, :delete]
     resources "/locations", LocationController
+    resources "/users", UserController
   end
 end

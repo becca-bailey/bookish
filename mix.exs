@@ -19,7 +19,7 @@ defmodule Bookish.Mixfile do
   def application do
     [mod: {Bookish, []},
      applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex]]
+                    :phoenix_ecto, :postgrex, :ueberauth_slack]]
   end
 
   # Specifies which paths to compile per environment.
@@ -38,7 +38,9 @@ defmodule Bookish.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
-     {:mix_test_watch, "~> 0.2", only: :dev}]
+     {:mix_test_watch, "~> 0.2", only: :dev},
+     {:ueberauth, "~> 0.3"},
+     {:ueberauth_slack, "~> 0.4"}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
