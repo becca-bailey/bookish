@@ -1,12 +1,11 @@
 language: elixir
-elixir: 
+elixir:
   - 1.3.2
 install:
-  - mix local.rebar --force
-  - mix local.hex --force
-  - mix deps.get
+  - MIX_ENV=test mix local.rebar --force
+  - MIX_ENV=test mix local.hex --force
+  - MIX_ENV=test mix deps.get
 script:
-  - mix ecto.create
-  - mix ecto.migrate
-  - mix run priv/repo/seeds.exs
-  - mix test
+  - MIX_ENV=test mix ecto.create
+  - MIX_ENV=test mix ecto.migrate
+  - MIX_ENV=test mix test
