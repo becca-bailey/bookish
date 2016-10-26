@@ -3,29 +3,10 @@ defmodule Bookish.CheckOutControllerTest do
 
   alias Bookish.CheckOut
   alias Bookish.Book
-  @valid_attrs %{checked_out_to: "A person"}
-  @invalid_attrs %{}
   @user %{id: 1, name: "user"}
+  @valid_attrs %{"book_id": 1}
+  @invalid_attrs %{}
   
-  test "lists all entries on index", %{conn: conn} do
-    book = Repo.insert! %Book{}
-
-    conn = get conn, book_check_out_path(conn, :index, book)
-
-    assert html_response(conn, 200) =~ "Listing check outs"
-  end
-
-  test "renders form to check out a book", %{conn: conn} do
-    book = Repo.insert! %Book{} 
-
-    conn = 
-      conn
-      |> assign(:current_user, @user)
-      |> get(book_check_out_path(conn, :new, book))
-    
-    assert conn.status == 200 
-  end
-
   test "does not allow a non-logged-in user to check out a book" do
     book = Repo.insert! %Book{}  
 
@@ -41,33 +22,6 @@ defmodule Bookish.CheckOutControllerTest do
       conn
       |> assign(:current_user, @user)
       |> post(book_check_out_path(conn, :create, book), check_out: @valid_attrs)
-
-    assert redirected_to(conn) == book_path(conn, :index)
-    assert Repo.get_by(CheckOut, @valid_attrs)
-  end
-
-  test "does not create new check-out record and renders errors when data is invalid", %{conn: conn} do
-    book = Repo.insert! %Book{}
-
-    conn = 
-      conn
-      |> assign(:current_user, @user)
-      |> post(book_check_out_path(conn, :create, book), check_out: @invalid_attrs)
-
-    refute Repo.get_by(CheckOut, @invalid_attrs)
-    assert conn.status == 200
-  end
-
-  test "does not show new check-out page if a book is already checked out and redirects to the index", %{conn: conn} do
-    book = Repo.insert! %Book{}
-    check_out = 
-      Ecto.build_assoc(book, :check_outs, checked_out_to: "Person")
-    Repo.insert!(check_out)
-
-    conn = 
-      conn
-      |> assign(:current_user, @user)
-      |> get(book_check_out_path(conn, :new, book))
 
     assert redirected_to(conn) == book_path(conn, :index)
   end

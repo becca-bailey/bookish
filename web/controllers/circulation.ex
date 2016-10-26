@@ -15,7 +15,7 @@ defmodule Bookish.Circulation do
     render(conn, "checked_out.html", books: books)
   end
 
-  def check_out(conn) do
+  def get_book_with_location(conn) do
     changeset = 
       conn.assigns[:book]
       |> Book.checkout(%{"current_location": ""})

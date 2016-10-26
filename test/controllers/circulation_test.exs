@@ -96,10 +96,10 @@ defmodule Bookish.CirculationTest do
     assert Circulation.set_virtual_attributes(coll) == coll
   end
 
-  test "check_out updates the current location and returns the changed book", %{conn: conn} do
+  test "get_book_with_location updates the current location and returns the changed book", %{conn: conn} do
     book = Repo.insert! %Book{"current_location": "A place"}
     conn = post conn, book_check_out_path(conn, :create, book), check_out: %{"checked_out_to": "Person"} 
-    updated_book = Circulation.check_out(conn)
+    updated_book = Circulation.get_book_with_location(conn)
 
     assert is_nil(updated_book.current_location) 
   end

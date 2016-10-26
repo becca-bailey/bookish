@@ -6,7 +6,7 @@
 <% else %>
   <%= @book.current_location %>
   <div class="bold-text">
-    <%= link to: book_check_out_path(@conn, :new, @book) do %>
+    <%= link to: book_check_out_path(@conn, :create, @book), method: :post do %>
       <i class="fa fa-arrow-circle-right"></i>
       Check out
     <% end %>

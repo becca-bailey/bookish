@@ -12,22 +12,12 @@ defmodule Bookish.CheckOutController do
     render(conn, "index.html", check_outs: check_outs)
   end
 
-  def new(conn, _params) do
-    book = conn.assigns[:book]
-    if Circulation.checked_out? book do
-      conn
-      |> put_flash(:error, "Book is already checked out!")
-      |> redirect(to: book_path(conn, :index))
-    else
-      changeset = CheckOut.changeset(%CheckOut{})
-      render(conn, "new.html", changeset: changeset)
-    end
-  end
-
-  def create(conn, %{"check_out" => check_out_params}) do
+  def create(conn, data) do
+    user = get_user(conn)
+    check_out_params = Map.merge(data, %{"checked_out_to" => user.name})
     changeset = 
       conn
-      |> Circulation.check_out 
+      |> Circulation.get_book_with_location
       |> build_assoc(:check_outs)
       |> CheckOut.changeset(check_out_params)
 
@@ -36,8 +26,10 @@ defmodule Bookish.CheckOutController do
         conn
         |> put_flash(:info, "Book has been checked out!")
         |> redirect(to: book_path(conn, :index))
-      {:error, changeset} ->
-        render(conn, "new.html", changeset: changeset)
+      {:error, _changeset} ->
+        conn
+        |> put_flash(:error, "Book cannot be checked out")
+        |> redirect(to: book_path(conn, :index))
     end
   end
 
@@ -50,4 +42,9 @@ defmodule Bookish.CheckOutController do
         conn
     end
   end
+
+  defp get_user(conn) do
+    get_session(conn, :current_user) || conn.assigns[:current_user]
+  end
+
 end
