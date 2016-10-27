@@ -1,12 +1,12 @@
 <div class="author"><%= @book.author_firstname %> <%= @book.author_lastname %></div>
 <%= if @book.checked_out do %>
   <div class="bold-text">
-    <i class="fa fa-check-circle"></i> Checked out by <%= @book.checked_out_to %>
+    <i class="fa fa-check-circle"></i> Checked out by <%= @book.borrower_name %>
   </div>
 <% else %>
   <%= @book.current_location %>
   <div class="bold-text">
-    <%= link to: book_check_out_path(@conn, :new, @book) do %>
+    <%= link to: book_check_out_path(@conn, :create, @book), method: :post do %>
       <i class="fa fa-arrow-circle-right"></i>
       Check out
     <% end %>

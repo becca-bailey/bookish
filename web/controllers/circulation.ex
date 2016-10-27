@@ -15,7 +15,7 @@ defmodule Bookish.Circulation do
     render(conn, "checked_out.html", books: books)
   end
 
-  def check_out(conn) do
+  def get_book_with_location(conn) do
     changeset = 
       conn.assigns[:book]
       |> Book.checkout(%{"current_location": ""})
@@ -28,8 +28,15 @@ defmodule Bookish.Circulation do
 
   def return(conn, %{"id" => id}) do
     book = Repo.get!(Book, id)
-    changeset = Book.return(%Book{})
-    render(conn, "return.html", book: book, changeset: changeset) 
+    current_user = get_current_user(conn)
+    if current_user.id == borrower_id(book) do
+      changeset = Book.return(%Book{})
+      render(conn, "return.html", book: book, changeset: changeset) 
+    else
+      conn
+      |> put_flash(:error, "You cannot return someone else's book!")
+      |> redirect(to: book_path(conn, :index))
+    end
   end
   
   def process_return(conn, %{"id" => id, "book" => book_params}) do
@@ -55,15 +62,30 @@ defmodule Bookish.Circulation do
     not_empty?(CheckOut.current(CheckOut, book_id) |> Repo.all)
   end
 
-  def checked_out_to(book) do
+  def borrower_name(book) do
     if checked_out?(book) do
       record = List.first(CheckOut.current(CheckOut, book.id) |> Repo.all)
-      record.checked_out_to
+      record.borrower_name
+    end
+  end
+
+  def borrower_id(book) do
+    if checked_out?(book) do
+      record = List.first(CheckOut.current(CheckOut, book.id) |> Repo.all)
+      record.borrower_id
     end
   end
 
   defp not_empty?(coll) do
     List.first(coll) != nil
+  end
+
+  defp get_current_record(book) do
+    List.first(CheckOut.current(CheckOut, book.id) |> Repo.all)
+  end
+
+  defp get_current_user(conn) do
+    get_session(conn, :current_user) || conn.assigns[:current_user]
   end
 
   defp add_return_date(book) do
@@ -90,7 +112,7 @@ defmodule Bookish.Circulation do
     if checked_out?(book) do 
       changeset = 
         book
-        |> Book.checkout(%{"checked_out": true, "checked_out_to": checked_out_to(book)})
+        |> Book.checkout(%{"checked_out": true, "borrower_name": borrower_name(book)})
       case Repo.update(changeset) do
         {:ok, book} ->
           book

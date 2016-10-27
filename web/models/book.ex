@@ -9,7 +9,7 @@ defmodule Bookish.Book do
     field :year, :integer
     field :current_location, :string
     field :checked_out, :boolean, virtual: true, default: false
-    field :checked_out_to, :string, virtual: true
+    field :borrower_name, :string, virtual: true
     field :tags_list, :string, virtual: true
 
     has_many :check_outs, Bookish.CheckOut
@@ -31,7 +31,7 @@ defmodule Bookish.Book do
 
   def checkout(struct, params \\ %{}) do
     struct
-    |> cast(params, [:checked_out_to, :checked_out, :current_location])
+    |> cast(params, [:borrower_name, :checked_out, :current_location])
     |> validate_inclusion(:current_location, ["", nil])
   end
 
