@@ -9,13 +9,13 @@ defmodule Bookish.Tagging do
     |> associate_with_resource(book)
   end
 
+  def list_from_string(tags_string) when is_nil(tags_string) do
+    []
+  end
+
   def list_from_string(tags_string) do
-    if tags_string do
-      String.split(tags_string, ",")
-      |> Enum.map(&(String.trim &1))
-    else
-      []
-    end
+    String.split(tags_string, ",")
+    |> Enum.map(&(String.trim &1))
   end
 
   def get_or_create_tag(tags_list) do
@@ -28,9 +28,13 @@ defmodule Bookish.Tagging do
       Repo.get_by!(Tag, text: text)
     rescue
       Ecto.NoResultsError -> 
-        case Repo.insert %Tag{text: text} do
-          {:ok, tag} -> tag
-        end
+        add_tag(text)
+    end
+  end
+
+  defp add_tag(text) do
+    case Repo.insert %Tag{text: text} do
+      {:ok, tag} -> tag
     end
   end
 
@@ -47,6 +51,7 @@ defmodule Bookish.Tagging do
     changeset = 
       book
       |> Book.tags(%{"tags_list": tags_list})
+
     case Repo.update(changeset) do
       {:ok, book} ->
         book

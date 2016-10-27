@@ -33,12 +33,12 @@ defmodule Bookish.CheckOut do
     validate_not_checked_out(changeset, id)
   end
 
-  defp validate_not_checked_out(changeset, id) when id == nil do
+  defp validate_not_checked_out(changeset, id) when is_nil(id) do
     changeset
   end
 
   defp validate_not_checked_out(changeset, id) do
-    if Circulation.id_checked_out?(id) do
+    if Circulation.checked_out?(id) do
       changeset
       |> add_error(:checked_out, "Book is already checked out!")
     else
