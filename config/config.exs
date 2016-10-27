@@ -25,7 +25,7 @@ config :logger, :console,
 # Configures Ueberauth
 config :ueberauth, Ueberauth,
   providers: [
-    slack: {Ueberauth.Strategy.Slack, [team: "T026MULUJ", default_scope: "team:read"]}
+    slack: {Ueberauth.Strategy.Slack, [team: "T026MULUJ", default_scope: "team:read,users:read"]}
   ]
 
 config :ueberauth, Ueberauth.Strategy.Slack.OAuth,
