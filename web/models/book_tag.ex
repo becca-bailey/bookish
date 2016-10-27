@@ -8,8 +8,6 @@ defmodule Bookish.BookTag do
     timestamps()
   end
 
-  @doc
-
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:book_id, :tag_id])

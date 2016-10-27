@@ -80,10 +80,6 @@ defmodule Bookish.Circulation do
     List.first(coll) != nil
   end
 
-  defp get_current_record(book) do
-    List.first(CheckOut.current(CheckOut, book.id) |> Repo.all)
-  end
-
   defp get_current_user(conn) do
     get_session(conn, :current_user) || conn.assigns[:current_user]
   end
@@ -101,7 +97,6 @@ defmodule Bookish.Circulation do
 
     Repo.update(changeset)
   end
-
 
   def set_virtual_attributes(coll) do
     coll 
