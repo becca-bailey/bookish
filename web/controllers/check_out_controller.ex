@@ -6,6 +6,7 @@ defmodule Bookish.CheckOutController do
 
   alias Bookish.CheckOut
   alias Bookish.Circulation
+  alias Bookish.AuthController, as: Auth
 
   def index(conn, _params) do
     check_outs = Repo.all(CheckOut)
@@ -13,7 +14,7 @@ defmodule Bookish.CheckOutController do
   end
 
   def create(conn, data) do
-    user = get_user(conn)
+    user = Auth.get_user(conn)
     check_out_params = Map.merge(data, %{"borrower_name" => user.name, "borrower_id" => user.id})
     changeset = 
       conn
@@ -42,9 +43,4 @@ defmodule Bookish.CheckOutController do
         conn
     end
   end
-
-  defp get_user(conn) do
-    get_session(conn, :current_user) || conn.assigns[:current_user]
-  end
-
 end

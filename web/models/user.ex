@@ -10,5 +10,4 @@ defmodule Bookish.User do
   defp basic_info(auth) do
     %{id: auth.uid, name: auth.info.name}
   end
-
 end
