@@ -16,13 +16,18 @@ defmodule Bookish.AuthController do
     |> redirect(to: "/")
   end
 
-  def callback(%{assigns: %{ueberauth_failure: _fails}} = conn, _params) do
+  def callback(%{assigns: %{ueberauth_failure: fails}} = conn, params) do
+    IO.puts "Authentication failed"
+    IO.inspect fails
+    IO.inspect params
     conn
     |> put_flash(:error, "Failed to authenticate.")
     |> redirect(to: "/")
   end
 
-  def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
+  def callback(%{assigns: %{ueberauth_auth: auth}} = conn, params) do
+    IO.puts "Authentication succeeded for #{auth.info.name}"
+    IO.inspect params
     case User.find_or_create(auth) do
       {:ok, user} ->
         path = get_path(conn)
