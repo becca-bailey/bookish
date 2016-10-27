@@ -60,9 +60,14 @@
   bottom: 2px;
 }
 
+$location-color: #EF4836; 
+
 .location {
   .tag {
-    background-color: #EF4836;
+    background-color: $location-color;
+    &:hover {
+      background-color: lighten($location-color, 10%);
+    }
   }
 }
 

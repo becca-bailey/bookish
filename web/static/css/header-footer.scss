@@ -14,19 +14,18 @@ header {
 }
 
 nav { 
-  @include media($medium) {
-    margin-top: 2em;
-  }
   a {
     text-align: center;
     @include span-columns(4);
   }
   @include media($medium) {
     @include span-columns(7)
+    margin-top: 2em;
   }
 }
 
 .alert {
+  padding: $default-padding / 2;
   width: 100%;
   color: white;
   border-radius: 4px;
@@ -37,6 +36,10 @@ nav {
 
 .alert-danger {
   background-color: $error;
+}
+
+.alert-info {
+  background-color: $green;
 }
 
 footer {

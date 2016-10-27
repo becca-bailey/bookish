@@ -1,11 +1,21 @@
-<h1 id="main-title">Bookish</h1>
+<header class="main-header">
+  <h1>Bookish</h1>
 
-<div class="alert alert-info" role="alert">
-  <%= get_flash(@conn, :info) %>
-</div>
-<div class="alert alert-danger" role="alert">
-  <%= get_flash(@conn, :error) %>
-</div>
+  <div class="authenticate">
+    <%= if @current_user do %>
+      <%= link to: auth_path(@conn, :delete), method: :delete, class: "bold-text" do %> 
+        <i class="fa fa-sign-out"></i> Logout
+      <% end %>
+    <% else %>
+      <a href="/auth/slack">
+        <img alt="Sign in with Slack" height="40" width="172" src="https://platform.slack-edge.com/img/sign_in_with_slack.png" srcset="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x" />
+      </a>
+    <% end %>
+  </div>
+  
+</header>
+
+<%= render Bookish.SharedView, "_flash.html", conn: @conn %>
 
 <div class="icon-links">
   <div class="box">
@@ -27,13 +37,3 @@
     </a>
   </div>
 </div>
-
-<center>
-  <%= if @current_user do %>
-    <%= link "Logout", to: auth_path(@conn, :delete), method: :delete %> 
-  <% else %>
-    <a href="/auth/slack">
-      <img alt="Sign in with Slack" height="40" width="172" src="https://platform.slack-edge.com/img/sign_in_with_slack.png" srcset="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x" />
-    </a>
-  <% end %>
-</center>

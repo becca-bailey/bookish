@@ -2,48 +2,81 @@
 @import "bourbon/bourbon";
 @import "neat/neat";
 
-#main-title {
+header.main-header {
+  @include row();
+  h1 {
+    text-align: center;
+    margin: 0;
+    font-size: modular-scale(3);
+    @include media($medium) {
+      @include span-columns(6);
+      text-align: left;
+      font-size: modular-scale(4);
+      margin: $default-margin 0 0 0;
+    }
+  }
+}
+
+.authenticate {
+  margin: $default-margin 0;
   text-align: center;
-  margin: 0;
-  font-size: modular-scale(3);
   @include media($medium) {
-    font-size: modular-scale(4);
-    margin: $default-margin;
+    text-align: right;
+    margin-top: 2.5em;
+    @include span-columns(6);
   }
 }
 
 .icon-links {
   text-align: center;
-  .box {
-    @include pad($default-padding);
-    border-radius: $border-radius;
-    &:hover {
-      background-color: lighten($background-color, 5%);
-    }
-    p {
-      font-weight: 700;
-      text-transform: lowercase;
-    }
+  margin-top: $default-margin * 2;
+}
+
+.box {
+  @include pad($default-padding);
+  border-radius: $border-radius;
+  &:hover {
+    background-color: lighten($background-color, 5%);
+  }
+  a {
+    @include row();
+  }
+  p {
+    font-weight: 700;
+    text-transform: lowercase;
+    font-size: 1.25em;
+    @include span-columns(6);
     @include media($medium) {
-      @include span-columns(4);
-    }
-    div {
-      height: $icon-height;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      @include media($large) {
-        height: $icon-height * 1.5;
-      }
-    }
-    .add {
-      background-image: url("/images/add.png");
-    }
-    .look {
-      background-image: url("/images/look.png");
-    }
-    .return {
-      background-image: url("/images/return.png");
+      font-size: 1em;
+      @include span-columns(12);
     }
   }
+  div {
+    height: $icon-height;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    @include span-columns(6);
+    @include media($medium) {
+      @include span-columns(12);
+    }
+    @include media($large) {
+      height: $icon-height * 1.5;
+    }
+  }
+  @include media($medium) {
+    @include span-columns(4);
+  }
+}
+
+.add {
+  background-image: url("/images/add.png");
+}
+
+.look {
+  background-image: url("/images/look.png");
+}
+
+.return {
+  background-image: url("/images/return.png");
 }

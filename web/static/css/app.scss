@@ -24,6 +24,14 @@ body {
   @include pad($default-padding);
 }
 
+.alert {
+  padding: $default-padding / 2;
+}
+
+.alert-info {
+  background-color: $green;
+}
+
 // Typography
 
 a {

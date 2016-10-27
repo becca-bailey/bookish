@@ -2,6 +2,10 @@
 @import "neat/neat";
 @import "variables";
 
+form .alert {
+  margin-bottom: $default-margin;
+}
+
 .form-container {
   @include media($medium) {
     @include outer-container($max-width / 1.5);

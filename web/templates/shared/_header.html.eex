@@ -13,11 +13,8 @@
       <% end %>
     </nav>
   </div>
-  <div class="alert alert-info" role="alert">
-    <%= get_flash(@conn, :info) %>
-  </div>
-  <div class="alert alert-danger" role="alert">
-    <%= get_flash(@conn, :error) %>
-  </div>
+
+  <%= render Bookish.SharedView, "_flash.html", conn: @conn %>
+
 </header>
 
