@@ -8,8 +8,13 @@ defmodule Bookish.BookControllerTest do
   @invalid_attrs %{}
   @user %{id: "email", name: "user"}
 
-  test "lists all books on index", %{conn: conn} do
+  test "index redirects to page 1", %{conn: conn} do
     conn = get conn, book_path(conn, :index)
+    assert conn.status == 302
+  end
+
+  test "lists all books on index", %{conn: conn} do
+    conn = get conn, book_path(conn, :paginate, 1)
     assert conn.status == 200
   end
 
@@ -28,7 +33,7 @@ defmodule Bookish.BookControllerTest do
     Ecto.build_assoc(book, :check_outs, borrower_name: "Becca")
     |> Repo.insert!
 
-    conn = get conn, book_path(conn, :index)
+    conn = get conn, book_path(conn, :paginate, 1)
 
     assert html_response(conn, 200) =~ "Becca"
   end
@@ -36,7 +41,7 @@ defmodule Bookish.BookControllerTest do
   test "if a book is not checked out, index displays a link to check out the book", %{conn: conn} do
     Repo.insert! %Book{title: "This is my book"}
 
-    conn = get conn, book_path(conn, :index)
+    conn = get conn, book_path(conn, :paginate, 1)
 
     assert html_response(conn, 200) =~ "Check out"
     assert html_response(conn, 200) =~ "This is my book"
@@ -47,7 +52,7 @@ defmodule Bookish.BookControllerTest do
     Ecto.build_assoc(book, :check_outs, borrower_name: "Becca")
     |> Repo.insert!
 
-    conn = get conn, book_path(conn, :index)
+    conn = get conn, book_path(conn, :paginate, 1)
 
     assert html_response(conn, 200) =~ "checked-out"
   end
@@ -55,7 +60,7 @@ defmodule Bookish.BookControllerTest do
   test "if a book is not checked out, the div has the class 'available'", %{conn: conn} do
     Repo.insert! %Book{title: "This book is not checked out"}
 
-    conn = get conn, book_path(conn, :index)
+    conn = get conn, book_path(conn, :paginate, 1)
 
     assert html_response(conn, 200) =~ "available"
   end
@@ -137,7 +142,7 @@ defmodule Bookish.BookControllerTest do
     |> assign(:current_user, @user)
     |> post(book_path(conn, :create), book: params)
 
-    conn = get conn, book_path(conn, :index)
+    conn = get conn, book_path(conn, :paginate, 1)
 
     assert html_response(conn, 200) =~ "nice"
     assert html_response(conn, 200) =~ "short"
@@ -151,7 +156,7 @@ defmodule Bookish.BookControllerTest do
     |> assign(:current_user, @user)
     |> post(book_path(conn, :create), book: params)
 
-    conn = get conn, book_path(conn, :index)
+    conn = get conn, book_path(conn, :paginate, 1)
     book = List.first(Repo.all(Book)) |> Repo.preload(:tags)
 
     Enum.each(book.tags, fn(tag) ->
@@ -273,4 +278,5 @@ defmodule Bookish.BookControllerTest do
     assert redirected_to(conn) == "/"
     assert Repo.get(Book, book.id)
   end
+
 end

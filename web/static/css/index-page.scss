@@ -90,3 +90,22 @@ $location-color: #EF4836;
   }
 }
 
+.pagination {
+  span {
+    margin: $default-margin / 2;
+    font-weight: 700;
+  }
+  text-align: center;
+  .disabled {
+    pointer-events: none;
+  }
+  .enabled {
+    a {
+      color: $green;
+      &:hover {
+        color: lighten($green, 10%)
+      }
+    }
+  }
+}
+

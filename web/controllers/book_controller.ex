@@ -8,18 +8,37 @@ defmodule Bookish.BookController do
   alias Bookish.Tagging
   alias Bookish.Location
 
+  @entries_per_page 10 
+
   def index(conn, _params) do
+    conn
+    |> redirect(to: book_path(conn, :paginate, 1))
+  end
+
+  def paginate(conn, %{"number" => number}) do
+    n = String.to_integer(number)
     books = 
       Book.sorted_by_title 
+      |> Book.paginate(n, @entries_per_page)
       |> load_from_query 
-    render(conn, "index.html", books: books)
+    render(conn, "index.html", books: books, page_count: number_of_pages, current_page: n)
+  end
+
+  defp number_of_pages do
+    count = 
+      Book
+      |> Book.count
+      |> Repo.all
+      |> List.first
+    Float.ceil(count / @entries_per_page)
+    |> Kernel.trunc
   end
 
   def index_by_letter(conn, %{"letter" => letter}) do
     books = 
       Book.get_by_letter(letter)
       |> load_from_query 
-    render(conn, "index.html", books: books)
+    render(conn, "index.html", books: books, page_count: number_of_pages, current_page: 1)
   end
 
   def new(conn, _params) do

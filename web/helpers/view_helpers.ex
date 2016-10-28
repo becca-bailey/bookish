@@ -6,6 +6,14 @@ defmodule Bookish.ViewHelpers do
       "available"
     end
   end
+
+  def get_number_class(n, current_page) when n == current_page do
+    "disabled"
+  end
+
+  def get_number_class(_, _) do
+    "enabled"
+  end
 end
 
 

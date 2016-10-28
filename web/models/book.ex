@@ -48,13 +48,25 @@ defmodule Bookish.Book do
   
   def sorted_by_title do
     from b in Bookish.Book,
-    order_by: b.title,
-    select: b
+      order_by: b.title,
+      select: b
   end
 
   def get_by_letter(letter) do
     from b in Bookish.Book,
-    where: ilike(b.title, ^"#{letter}%"),
-    select: b
+      where: ilike(b.title, ^"#{letter}%"),
+      order_by: b.title,
+      select: b
+  end
+
+  def paginate(query, page, size) do
+    from b in query,
+      limit: ^size,
+      offset: ^((page-1) * size)
+  end
+
+  def count(query) do
+    from b in query,
+      select: count(b.id)
   end
 end
