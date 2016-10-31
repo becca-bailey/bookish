@@ -21,7 +21,7 @@ defmodule Bookish.BookController do
       Book.sorted_by_title 
       |> Book.paginate(n, @entries_per_page)
       |> load_from_query 
-    render(conn, "index.html", books: books, page_count: number_of_pages, current_page: n)
+    render(conn, "index.html", books: books, page_count: number_of_pages, current_page: n, filtered: false)
   end
 
   defp number_of_pages do
@@ -38,7 +38,7 @@ defmodule Bookish.BookController do
     books = 
       Book.get_by_letter(letter)
       |> load_from_query 
-    render(conn, "index.html", books: books, page_count: number_of_pages, current_page: 1)
+    render(conn, "index.html", books: books, page_count: number_of_pages, current_page: 1, filtered: true)
   end
 
   def new(conn, _params) do

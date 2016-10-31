@@ -2,28 +2,45 @@
 <h2>Where is that book?</h2>
 
 <div class="search">
-  <h4 class="search-by-title"><i class="fa fa-search"></i> Search by title</h4>
+  <h4><i class="fa fa-search"></i> Filter results</h4>
   <div class="letters">
+    <span class="bold-text">By title:  </span>
     <%= for letter <- ?a..?z do %>
       <% l = char_to_string(letter) %>
-      <a href="/books/starting-with/<%= l %>"><%= l %></a>
+      <a href="/books/starting-with/<%= String.downcase(l) %>"><%= l %></a>
     <% end %>
+  </div>
+  <div class="availability">
+    <span class="bold-text">By availability:  </span>
+    <span class="option" id="available">available</span>
+    <span class="option" id="checked-out">checked out</span>
   </div>
 </div>
 
 <div class="books">
+  <%= if empty?(@books) do %>
+    <p>No books match this criteria. <%= link "Add a book!", to: book_path(@conn, :new) %></p>
+  <% end %>
+
   <%= for book <- @books do %>
     <div class="entry <%= get_class_name(book) %>">
       <%= render Bookish.SharedView, "_book.html", conn: @conn, book: book %>
     </div>
   <% end %>
 </div>
-<br>
 
-<%= link to: book_path(@conn, :new) do %>
-  <div class="bold-text">
-    <i class="fa fa-plus-circle"></i> Add a book
-  </div>
+<%= if @filtered do %>
+  <%= link to: book_path(@conn, :index) do %>
+    <p class="bold-text">
+      <i class="fa fa-arrow-left"></i> View All 
+    </p>
+  <% end %>
+<% else %>
+  <%= link to: book_path(@conn, :new) do %>
+    <p class="bold-text">
+      <i class="fa fa-plus-circle"></i> Add a book
+    </p>
+  <% end %>
 <% end %>
 
 <div class="pagination">

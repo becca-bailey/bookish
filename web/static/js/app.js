@@ -20,7 +20,20 @@ import "phoenix_html"
 
 // import socket from "./socket"
 //
-$(".search-by-title").on("click", function() {
-  $(".letters").toggle('slow');
+
+$('#available').on('click', function() {
+  $(this).toggleClass('selected');
+  $('.books').toggleClass('show-available');
+  $("#checked-out").removeClass('selected');
+  $('.books').removeClass('show-checked-out');
 });
+
+$('#checked-out').on('click', function() {
+  $(this).toggleClass('selected');
+  $('.books').toggleClass('show-checked-out');
+  $("#available").removeClass('selected');
+  $('.books').removeClass('show-available');
+});
+
+
 

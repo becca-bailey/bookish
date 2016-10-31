@@ -3,6 +3,12 @@ defmodule Bookish.BookView do
   import Bookish.ViewHelpers
 
   def char_to_string(char) do
-    String.upcase(List.to_string([char]))
+    [char]
+    |> List.to_string
+    |> String.upcase
+  end
+
+  def empty?(books) do
+    length(books) == 0
   end
 end

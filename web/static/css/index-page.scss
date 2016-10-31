@@ -38,17 +38,40 @@
   }
 }
 
+// Filters
+
+.show-available .checked-out {
+  display: none;
+}
+
+.show-checked-out .available {
+  display: none;
+}
+
+
 .search {
-  h4 {
-    margin: 0;
-    cursor: pointer;
-    color: $gray;
-    &:hover {
-      color: $text-color;
+  font-size: .9em;
+  div {
+    margin: $default-margin 0;
+  }
+  .availability {
+    @include row();
+    .option {
+      border-radius: $small-border-radius;
+      padding: 3px 5px;
+      &:hover {
+        background-color: $green;
+        opacity: 0.5;
+        cursor:pointer;
+      }
     }
   }
-  .letters { 
-    display: none;
+  .selected {
+    background-color: $green;
+  }
+  h4 {
+    font-size: 1.2em;
+    margin: 0;
   }
   padding: $default-padding / 2;
   background-color: lighten($background-color, 5%);
