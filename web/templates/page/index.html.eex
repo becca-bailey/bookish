@@ -31,7 +31,7 @@
     </a>
   </div>
   <div class="box">
-    <a href=<%= circulation_path(@conn, :checked_out) %>>
+    <a href=<%= book_path(@conn, :checked_out) %>>
       <div class="return"></div>
       <p>Return a book</p>
     </a>

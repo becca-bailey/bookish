@@ -4,41 +4,13 @@ defmodule Bookish.BookController do
   plug Bookish.Plugs.RequireAuth when action in [:new, :create, :edit, :update, :delete]
 
   alias Bookish.Book
-  alias Bookish.Circulation
+  alias Bookish.Resource
   alias Bookish.Tagging
   alias Bookish.Location
-
-  @entries_per_page 10 
+  alias Bookish.PaginationController
 
   def index(conn, _params) do
-    conn
-    |> redirect(to: book_path(conn, :paginate, 1))
-  end
-
-  def paginate(conn, %{"number" => number}) do
-    n = String.to_integer(number)
-    books = 
-      Book.sorted_by_title 
-      |> Book.paginate(n, @entries_per_page)
-      |> load_from_query 
-    render(conn, "index.html", books: books, page_count: number_of_pages, current_page: n, filtered: false)
-  end
-
-  defp number_of_pages do
-    count = 
-      Book
-      |> Book.count
-      |> Repo.all
-      |> List.first
-    Float.ceil(count / @entries_per_page)
-    |> Kernel.trunc
-  end
-
-  def index_by_letter(conn, %{"letter" => letter}) do
-    books = 
-      Book.get_by_letter(letter)
-      |> load_from_query 
-    render(conn, "index.html", books: books, page_count: number_of_pages, current_page: 1, filtered: true)
+    PaginationController.show_pages(conn, %{"number" => "1"})
   end
 
   def new(conn, _params) do
@@ -94,22 +66,53 @@ defmodule Bookish.BookController do
     |> put_flash(:info, "Book deleted successfully.")
     |> redirect(to: book_path(conn, :index))
   end
-
-  defp load_from_query(query) do
-    query
-    |> Repo.all
-    |> preload_associations
-    |> Circulation.set_virtual_attributes 
-  end
-
-  defp preload_associations(coll) do
-    coll
-    |> Repo.preload(:tags)
-    |> Repo.preload(:location)
+  
+  def checked_out(conn, _params) do
+    books = 
+      Resource.get_checked_out(Book) 
+      |> Repo.all
+      |> set_virtual_attributes
+    render(conn, "checked_out.html", books: books)
   end
 
   defp get_locations do
     Location.select_name 
     |> Repo.all
+  end
+  
+  def load_from_query(query) do
+    query
+    |> Repo.all
+    |> preload_associations
+    |> set_virtual_attributes 
+  end
+  
+  defp preload_associations(coll) do
+    coll
+    |> Repo.preload(:tags)
+    |> Repo.preload(:location)
+  end
+  
+  def set_virtual_attributes(coll) do
+    coll 
+    |> Enum.map(&(set_attributes(&1)))
+  end
+
+  def set_attributes(resource) do
+    if Resource.checked_out?(resource) do 
+      set_checked_out_attributes(resource)
+    else
+      resource
+    end
+  end
+
+  defp set_checked_out_attributes(resource) do
+    changeset = 
+      resource
+      |> Resource.checkout(%{"checked_out": true, "borrower_name": Resource.borrower_name(resource)})
+    case Repo.update(changeset) do
+      {:ok, resource} ->
+        resource
+    end
   end
 end

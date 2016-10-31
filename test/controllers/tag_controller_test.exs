@@ -81,7 +81,7 @@ defmodule Bookish.TagControllerTest do
     |> Ecto.Changeset.put_assoc(:tags, [tag])
     |> Repo.update!
 
-    conn = get conn, books_tag_path(conn, :show, tag)
+    conn = get conn, tag_path(conn, :show, tag)
 
     assert html_response(conn, 200) =~ "Tagged book" 
   end

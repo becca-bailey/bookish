@@ -16,15 +16,11 @@ defmodule Bookish.Router do
 
   scope "/books", Bookish do
     pipe_through :browser
-    get "/starting-with/:letter", BookController, :index_by_letter, as: :book
-    get "/page/:number", BookController, :paginate, as: :book
-    get "/checked_out", Circulation, :checked_out, as: :circulation
-    get "/:id/return", Circulation, :return, as: :circulation
-    post "/:id/return", Circulation, :process_return, as: :circulation
-    put "/:id/return", Circulation, :process_return, as: :circulation
-    
-    resources "/tags", TagController, only: [:show], as: :books_tag
-    resources "/locations", LocationController, only: [:show], as: :books_location
+    get "/starting-with/:letter", SearchController, :index_by_letter, as: :search
+    get "/page/:number", PaginationController, :paginate
+    get "/checked_out", BookController, :checked_out, as: :book
+    get "/:book_id/return", ReturnController, :return, as: :return
+    post "/:book_id/return", ReturnController, :process_return, as: :return
   end
 
   scope "/auth", Bookish do
@@ -45,7 +41,7 @@ defmodule Bookish.Router do
       resources "/check_outs", CheckOutController, only: [:index, :new, :create]
     end
 
-    resources "/tags", TagController, only: [:create, :delete]
+    resources "/tags", TagController, only: [:create, :delete, :show]
     resources "/locations", LocationController
     resources "/users", UserController
   end

@@ -1,6 +1,5 @@
 defmodule Bookish.Book do
   use Bookish.Web, :model
-  import Ecto.Query
 
   schema "books" do
     field :title, :string
@@ -27,46 +26,5 @@ defmodule Bookish.Book do
     |> cast(params, [:title, :author_firstname, :author_lastname, :year, :current_location, :tags_list, :location_id])
     |> validate_required([:title, :author_firstname, :author_lastname, :year])
     |> validate_number(:year, greater_than_or_equal_to: 1000, less_than_or_equal_to: 9999, message: "Must be a valid year")
-  end
-
-  def checkout(struct, params \\ %{}) do
-    struct
-    |> cast(params, [:borrower_name, :checked_out, :current_location])
-    |> validate_inclusion(:current_location, ["", nil])
-  end
-
-  def return(struct, params \\ %{}) do
-    struct 
-    |> cast(params, [:current_location])
-    |> validate_required([:current_location])
-  end
-
-  def tags(struct, params \\ %{}) do
-    struct
-    |> cast(params, [:tags_list])
-  end
-  
-  def sorted_by_title do
-    from b in Bookish.Book,
-      order_by: b.title,
-      select: b
-  end
-
-  def get_by_letter(letter) do
-    from b in Bookish.Book,
-      where: ilike(b.title, ^"#{letter}%"),
-      order_by: b.title,
-      select: b
-  end
-
-  def paginate(query, page, size) do
-    from b in query,
-      limit: ^size,
-      offset: ^((page-1) * size)
-  end
-
-  def count(query) do
-    from b in query,
-      select: count(b.id)
   end
 end

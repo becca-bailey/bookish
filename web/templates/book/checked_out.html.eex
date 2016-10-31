@@ -10,7 +10,7 @@
         </span>
       </div>
       <%= render Bookish.SharedView, "_book_details.html", conn: @conn, book: book %>
-      <%= link to: circulation_path(@conn, :return, book) do %>
+      <%= link to: return_path(@conn, :return, book) do %>
         <div class="bold-text">
           <i class="fa fa-arrow-circle-left"></i> Return 
         </div>

@@ -3,29 +3,15 @@ defmodule Bookish.BookControllerTest do
 
   alias Bookish.Book
   alias Bookish.Tag
+  alias Bookish.BookController
 
   @valid_attrs %{author_firstname: "some content", author_lastname: "some content", current_location: "some content", title: "some content", year: 2016, location_id: 1}
   @invalid_attrs %{}
   @user %{id: "email", name: "user"}
 
-  test "index redirects to page 1", %{conn: conn} do
-    conn = get conn, book_path(conn, :index)
-    assert conn.status == 302
-  end
-
   test "lists all books on index", %{conn: conn} do
-    conn = get conn, book_path(conn, :paginate, 1)
+    conn = get conn, book_path(conn, :index)
     assert conn.status == 200
-  end
-
-  test "lists books by letter", %{conn: conn} do
-    Repo.insert! %Book{title: "A brief history of programming"}
-    Repo.insert! %Book{title: "Something else"}
-
-    conn = get conn, book_path(conn, :index_by_letter, "A")
-
-    assert html_response(conn, 200) =~ "A brief history of programming"
-    refute html_response(conn, 200) =~ "Something else"
   end
 
   test "if a book is checked out, index displays the name of the person who has checked out the book", %{conn: conn} do
@@ -33,7 +19,7 @@ defmodule Bookish.BookControllerTest do
     Ecto.build_assoc(book, :check_outs, borrower_name: "Becca")
     |> Repo.insert!
 
-    conn = get conn, book_path(conn, :paginate, 1)
+    conn = get conn, book_path(conn, :index)
 
     assert html_response(conn, 200) =~ "Becca"
   end
@@ -41,7 +27,7 @@ defmodule Bookish.BookControllerTest do
   test "if a book is not checked out, index displays a link to check out the book", %{conn: conn} do
     Repo.insert! %Book{title: "This is my book"}
 
-    conn = get conn, book_path(conn, :paginate, 1)
+    conn = get conn, book_path(conn, :index)
 
     assert html_response(conn, 200) =~ "Check out"
     assert html_response(conn, 200) =~ "This is my book"
@@ -52,7 +38,7 @@ defmodule Bookish.BookControllerTest do
     Ecto.build_assoc(book, :check_outs, borrower_name: "Becca")
     |> Repo.insert!
 
-    conn = get conn, book_path(conn, :paginate, 1)
+    conn = get conn, book_path(conn, :index)
 
     assert html_response(conn, 200) =~ "checked-out"
   end
@@ -60,7 +46,7 @@ defmodule Bookish.BookControllerTest do
   test "if a book is not checked out, the div has the class 'available'", %{conn: conn} do
     Repo.insert! %Book{title: "This book is not checked out"}
 
-    conn = get conn, book_path(conn, :paginate, 1)
+    conn = get conn, book_path(conn, :index)
 
     assert html_response(conn, 200) =~ "available"
   end
@@ -142,7 +128,7 @@ defmodule Bookish.BookControllerTest do
     |> assign(:current_user, @user)
     |> post(book_path(conn, :create), book: params)
 
-    conn = get conn, book_path(conn, :paginate, 1)
+    conn = get conn, book_path(conn, :index)
 
     assert html_response(conn, 200) =~ "nice"
     assert html_response(conn, 200) =~ "short"
@@ -156,11 +142,11 @@ defmodule Bookish.BookControllerTest do
     |> assign(:current_user, @user)
     |> post(book_path(conn, :create), book: params)
 
-    conn = get conn, book_path(conn, :paginate, 1)
+    conn = get conn, book_path(conn, :index)
     book = List.first(Repo.all(Book)) |> Repo.preload(:tags)
 
     Enum.each(book.tags, fn(tag) ->
-      assert html_response(conn, 200) =~ "/books/tags/#{tag.id}"
+      assert html_response(conn, 200) =~ "/tags/#{tag.id}"
     end)
   end
 
@@ -279,4 +265,52 @@ defmodule Bookish.BookControllerTest do
     assert Repo.get(Book, book.id)
   end
 
+  test "renders checked_out page", %{conn: conn} do
+    conn = get conn, "/books/checked_out"
+    assert conn.status == 200
+  end
+
+  test "checked_out renders only books that are checked out", %{conn: conn} do
+    checked_out_book = Repo.insert! %Book{title: "This book is checked out"}
+    Repo.insert! %Book{title: "This book is not checked out"}
+
+    check_out =
+      Ecto.build_assoc(checked_out_book, :check_outs, borrower_name: "Person")
+    Repo.insert!(check_out)
+
+    conn = get conn, book_path(conn, :checked_out)
+    assert html_response(conn, 200) =~ "This book is checked out"
+    refute html_response(conn, 200) =~ "This book is not checked out"
+  end
+
+  test "checked_out displays the name of the person who has checked out the book", %{conn: conn} do
+    checked_out_book = Repo.insert! %Book{title: "This book is checked out"}
+
+    check_out =
+      Ecto.build_assoc(checked_out_book, :check_outs, borrower_name: "Becca")
+    Repo.insert!(check_out)
+
+    conn = get conn, book_path(conn, :checked_out)
+    assert html_response(conn, 200) =~ "Becca"
+    refute html_response(conn, 200) =~ "This book is not checked out"
+  end
+
+  test "set virtual attributes returns an unchanged collection of books if no books are checked out" do
+    book = Repo.insert! %Book{}
+    coll = [book]
+
+    assert BookController.set_virtual_attributes(coll) == coll
+  end
+
+  test "if a check-out record exists for a book in the collection, it returns an updated collection" do
+    book = Repo.insert! %Book{}
+    coll = [book]
+    check_out =
+      Ecto.build_assoc(book, :check_outs, borrower_name: "Person")
+    Repo.insert!(check_out)
+    updated_coll = BookController.set_virtual_attributes(coll)
+
+    assert List.first(updated_coll).checked_out == true
+    assert List.first(updated_coll).borrower_name == "Person"
+  end
 end

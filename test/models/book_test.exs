@@ -51,24 +51,6 @@ defmodule Bookish.BookTest do
     assert book.checked_out
   end
 
-  test "current_location must be an empty string" do
-    attributes = %{current_location: "location"}
-    changeset = Book.checkout(%Book{}, attributes)
-    refute changeset.valid?
-  end
-  
-  test "return is valid with current_location" do
-    attributes = %{current_location: "location"}
-    changeset = Book.return(%Book{}, attributes)
-    assert changeset.valid?
-  end
-
-  test "current location must not be an empty string" do
-    attributes = %{current_location: ""}
-    changeset = Book.return(%Book{}, attributes)
-    refute changeset.valid?
-  end
-
   test "a book has a location" do
     location = Repo.insert! %Location{name: "Chicago"}
     book = Repo.insert! %Book{}
@@ -81,56 +63,5 @@ defmodule Bookish.BookTest do
       |> Repo.update!
     
     assert updated_book.location.name == "Chicago"
-  end
-
-  test "sorted_by_title query returns a list of books sorted by title" do
-    b = Repo.insert!(%Book{title: "B"})
-    a = Repo.insert!(%Book{title: "A"})
-    c = Repo.insert!(%Book{title: "C"})
-
-    expectedList = [a, b, c]
-
-    refute Repo.all(Book) == expectedList
-    assert Book.sorted_by_title |> Repo.all == expectedList
-  end
-
-  test "get_by_letter returns all books with titles starting with a certain letter do" do
-    a = Repo.insert!(%Book{title: "A"})
-    b = Repo.insert!(%Book{title: "B"})
-
-    assert Book.get_by_letter("A") |> Repo.all == [a]
-    assert Book.get_by_letter("b") |> Repo.all == [b]
-    assert Book.get_by_letter("C") |> Repo.all == []
-  end
-
-  test "count returns the number of results in a query" do
-    for _ <- 1..5 do Repo.insert!(%Book{}) end
-    count = 
-      Book
-      |> Book.count
-      |> Repo.all
-      |> List.first
-
-    assert count == 5
-  end
-
-  test "paginate returns the number of entries offset by the page number" do
-    for _ <- 1..12 do Repo.insert!(%Book{}) end
-    entries_per_page = 10
-    page_1 = 
-      Book
-      |> Book.paginate(1, entries_per_page)
-      |> Repo.all
-    page_1_count = length(page_1)
-
-    assert page_1_count == 10
-
-    page_2 = 
-      Book
-      |> Book.paginate(2, entries_per_page)
-      |> Repo.all
-    page_2_count = length(page_2)
-
-    assert page_2_count == 2
   end
 end

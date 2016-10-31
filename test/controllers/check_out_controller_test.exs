@@ -1,8 +1,10 @@
 defmodule Bookish.CheckOutControllerTest do
   use Bookish.ConnCase
+  import Bookish.CheckOutController
 
-  alias Bookish.CheckOut
   alias Bookish.Book
+  alias Bookish.CheckOut
+
   @user %{id: "email", name: "user"}
   @valid_attrs %{"book_id": 1}
   @invalid_attrs %{}
@@ -46,5 +48,13 @@ defmodule Bookish.CheckOutControllerTest do
     conn = post conn, book_check_out_path(conn, :create, book), check_out: @valid_attrs
 
     assert redirected_to(conn) == "/"
+  end
+
+  test "clear_location_details updates the current location and returns the changed book", %{conn: conn} do
+    book = Repo.insert! %Book{"current_location": "A place"}
+    conn = post conn, book_check_out_path(conn, :create, book), check_out: %{"borrower_name": "Person"}
+    updated_book = clear_location_details(conn)
+
+    assert is_nil(updated_book.current_location)
   end
 end

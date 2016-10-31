@@ -11,7 +11,7 @@ defmodule Bookish.LocationControllerTest do
     location = Repo.insert!(%Location{name: "Chicago"})
     Repo.insert!(%Book{title: "Book in Chicago", location: location})
 
-    conn = get conn, books_location_path(conn, :show, location)
+    conn = get conn, location_path(conn, :show, location)
 
     assert html_response(conn, 200) =~ "Book in Chicago"
   end

@@ -8,7 +8,7 @@
       <%= link to: book_path(@conn, :index) do %>
         <i class="fa fa-search"></i> look
       <% end %>
-      <%= link to: circulation_path(@conn, :checked_out) do %>
+      <%= link to: book_path(@conn, :checked_out) do %>
         <i class="fa fa-check-circle"></i> return
       <% end %>
     </nav>

@@ -8,7 +8,7 @@
     </span>
 
     <%= if @book.location do %>
-      <%= link to: books_location_path(@conn, :show, @book.location) do %>
+      <%= link to: location_path(@conn, :show, @book.location) do %>
         <div class="location">
           <%= @book.location.name %>
         </div>

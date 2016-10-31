@@ -5,7 +5,8 @@ defmodule Bookish.CheckOutController do
   plug Bookish.Plugs.RequireAuth when action in [:new, :create]
 
   alias Bookish.CheckOut
-  alias Bookish.Circulation
+  alias Bookish.Book
+  alias Bookish.Resource
   alias Bookish.AuthController, as: Auth
 
   def index(conn, _params) do
@@ -18,7 +19,7 @@ defmodule Bookish.CheckOutController do
     check_out_params = Map.merge(data, %{"borrower_name" => user.name, "borrower_id" => user.id})
     changeset = 
       conn
-      |> Circulation.get_book_with_location
+      |> clear_location_details 
       |> build_assoc(:check_outs)
       |> CheckOut.changeset(check_out_params)
 
@@ -33,11 +34,23 @@ defmodule Bookish.CheckOutController do
         |> redirect(to: book_path(conn, :index))
     end
   end
+  
+  def clear_location_details(conn) do
+    resource = conn.assigns[:book]
+    changeset = 
+      resource
+      |> Resource.checkout(%{"current_location": ""})
+      
+    case Repo.update (changeset) do
+      {:ok, resource} ->
+        resource
+    end
+  end
 
   defp assign_book(conn, _opts) do
     case conn.params do
       %{"book_id" => book_id} ->
-        book = Repo.get(Bookish.Book, book_id)
+        book = Repo.get(Book, book_id)
         assign(conn, :book, book)
       {:ok, _book} ->
         conn
