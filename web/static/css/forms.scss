@@ -1,6 +1,7 @@
 @import "bourbon/bourbon";
 @import "neat/neat";
 @import "variables";
+@import "mixins";
 
 form .alert {
   margin-bottom: $default-margin;
@@ -69,12 +70,7 @@ select {
 }
 
 button {
-  background-color: $secondary-color;
-  color: white;
-  font-size: 1em;
-  padding: $default-padding / 2;
-  border-radius: 4px;
-  border: none;
+  @include button($secondary-color);
   width: 100%;
   @include media($medium) {
     width: 200px;

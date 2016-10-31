@@ -1,4 +1,5 @@
 @import "variables";
+@import "mixins";
 @import "bourbon/bourbon";
 @import "neat/neat";
 
@@ -50,7 +51,6 @@
 
 
 .search {
-  font-size: .9em;
   div {
     margin: $default-margin 0;
   }
@@ -60,8 +60,7 @@
       border-radius: $small-border-radius;
       padding: 3px 5px;
       &:hover {
-        background-color: $green;
-        opacity: 0.5;
+        background-color: lighten($green, 10%);
         cursor:pointer;
       }
     }
@@ -70,7 +69,7 @@
     background-color: $green;
   }
   h4 {
-    font-size: 1.2em;
+    font-size: 1.1em;
     margin: 0;
   }
   padding: $default-padding / 2;
@@ -78,39 +77,19 @@
   border-radius: $border-radius;
 }
 
+// Tags and Location
+
 .tags, .location {
   position: relative;
   bottom: 2px;
 }
 
-$location-color: #EF4836; 
-
 .location {
-  .tag {
-    background-color: $location-color;
-    &:hover {
-      background-color: lighten($location-color, 10%);
-    }
-  }
-}
-
-.tags {
-  .tag {
-    background-color: $tag-color;
-  }
+  @include tag(#EF4836);
 }
 
 .tag {
-  white-space: nowrap;
-  display: inline;
-  border-radius: $small-border-radius;
-  padding: 3px 5px;
-  font-weight: 700;
-  margin-right: 5px;
-  font-size: .75em;
-  &:hover {
-    background-color: lighten($tag-color, 10%);
-  }
+  @include tag($tag-color);
 }
 
 .pagination {

@@ -6,18 +6,15 @@
     <span class="title">
       <h3><%= @book.title %></h3>
     </span>
-    
+
     <%= if @book.location do %>
-      <span class="location">
-        <%= link to: books_location_path(@conn, :show, @book.location) do %>
-          <div class="tag">
-            <%= @book.location.name %>
-          </div>
-        <% end %>
-      </span>
+      <%= link to: books_location_path(@conn, :show, @book.location) do %>
+        <div class="location">
+          <%= @book.location.name %>
+        </div>
+      <% end %>
     <% end %>
 
-    <span class="tags">
       <%= render Bookish.SharedView, "_tags.html", conn: @conn, tags: @book.tags %>
     </span>
   </span>
