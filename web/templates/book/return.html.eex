@@ -2,7 +2,7 @@
 
 <h2>Return this book</h2>
 
-<%= form_for @changeset, circulation_path(@conn, :process_return, @book), fn f -> %>
+<%= form_for @changeset, book_path(@conn, :process_return, @book), fn f -> %>
   <div class="form-container">
     <%= if @changeset.action do %>
       <div class="alert alert-danger">
@@ -26,7 +26,7 @@
   </div>
 <% end %>
 <br>
-<%= link to: circulation_path(@conn, :checked_out) do %>
+<%= link to: book_path(@conn, :checked_out) do %>
   <div class="bold-text">
     <i class="fa fa-arrow-left"></i> Back 
   </div>

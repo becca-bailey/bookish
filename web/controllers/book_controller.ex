@@ -4,41 +4,15 @@ defmodule Bookish.BookController do
   plug Bookish.Plugs.RequireAuth when action in [:new, :create, :edit, :update, :delete]
 
   alias Bookish.Book
-  alias Bookish.Circulation
   alias Bookish.Tagging
   alias Bookish.Location
+  alias Bookish.ResourceController
 
   @entries_per_page 10 
 
   def index(conn, _params) do
     conn
     |> redirect(to: book_path(conn, :paginate, 1))
-  end
-
-  def paginate(conn, %{"number" => number}) do
-    n = String.to_integer(number)
-    books = 
-      Book.sorted_by_title 
-      |> Book.paginate(n, @entries_per_page)
-      |> load_from_query 
-    render(conn, "index.html", books: books, page_count: number_of_pages, current_page: n, filtered: false)
-  end
-
-  defp number_of_pages do
-    count = 
-      Book
-      |> Book.count
-      |> Repo.all
-      |> List.first
-    Float.ceil(count / @entries_per_page)
-    |> Kernel.trunc
-  end
-
-  def index_by_letter(conn, %{"letter" => letter}) do
-    books = 
-      Book.get_by_letter(letter)
-      |> load_from_query 
-    render(conn, "index.html", books: books, page_count: number_of_pages, current_page: 1, filtered: true)
   end
 
   def new(conn, _params) do
@@ -63,7 +37,7 @@ defmodule Bookish.BookController do
   def edit(conn, %{"id" => id}) do
     book = 
       Repo.get!(Book, id) 
-      |> preload_associations
+      |> ResourceController.preload_associations
       |> Tagging.set_tags_list
     changeset = Book.changeset(book)
     render(conn, "edit.html", book: book, changeset: changeset, locations: get_locations)
@@ -94,18 +68,31 @@ defmodule Bookish.BookController do
     |> put_flash(:info, "Book deleted successfully.")
     |> redirect(to: book_path(conn, :index))
   end
-
-  defp load_from_query(query) do
-    query
-    |> Repo.all
-    |> preload_associations
-    |> Circulation.set_virtual_attributes 
+  
+  def checked_out(conn, _params) do
+    ResourceController.checked_out(conn, Book)
   end
 
-  defp preload_associations(coll) do
-    coll
-    |> Repo.preload(:tags)
-    |> Repo.preload(:location)
+  def paginate(conn, params) do
+    ResourceController.paginate(conn, params, Book)
+  end
+
+  def index_by_letter(conn, params) do
+    ResourceController.index_by_letter(conn, params, Book)
+  end
+
+  def return(conn, %{"id" => id}) do
+    book = Repo.get!(Book, id)
+    ResourceController.return(conn, book)
+  end
+  
+  def process_return(conn, %{"id" => id, "book" => book_params}) do
+    book = Repo.get!(Book, id)
+    ResourceController.process_return(conn, book, book_params)
+  end
+
+  def update_with_location(conn) do
+    ResourceController.update_resource_with_location(conn.assigns[:book])
   end
 
   defp get_locations do

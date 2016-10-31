@@ -18,10 +18,10 @@ defmodule Bookish.Router do
     pipe_through :browser
     get "/starting-with/:letter", BookController, :index_by_letter, as: :book
     get "/page/:number", BookController, :paginate, as: :book
-    get "/checked_out", Circulation, :checked_out, as: :circulation
-    get "/:id/return", Circulation, :return, as: :circulation
-    post "/:id/return", Circulation, :process_return, as: :circulation
-    put "/:id/return", Circulation, :process_return, as: :circulation
+    get "/checked_out", BookController, :checked_out, as: :book
+    get "/:id/return", BookController, :return, as: :book
+    post "/:id/return", BookController, :process_return, as: :book
+    put "/:id/return", BookController, :process_return, as: :book
     
     resources "/tags", TagController, only: [:show], as: :books_tag
     resources "/locations", LocationController, only: [:show], as: :books_location

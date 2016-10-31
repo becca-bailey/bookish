@@ -1,5 +1,6 @@
 defmodule Bookish.CheckOutTest do
   use Bookish.ModelCase
+  import Bookish.TestHelpers
 
   alias Bookish.CheckOut
   alias Bookish.Book
@@ -38,10 +39,5 @@ defmodule Bookish.CheckOutTest do
     current_check_out = List.first(CheckOut.current(CheckOut, book.id) |> Repo.all)
 
     assert current_check_out == check_out
-  end
-
-
-  def empty?(coll) do
-    is_nil(List.first(coll))
   end
 end

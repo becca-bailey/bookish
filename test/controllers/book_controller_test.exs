@@ -3,6 +3,8 @@ defmodule Bookish.BookControllerTest do
 
   alias Bookish.Book
   alias Bookish.Tag
+  alias Bookish.BookController
+  alias Bookish.ResourceController
 
   @valid_attrs %{author_firstname: "some content", author_lastname: "some content", current_location: "some content", title: "some content", year: 2016, location_id: 1}
   @invalid_attrs %{}
@@ -279,4 +281,113 @@ defmodule Bookish.BookControllerTest do
     assert Repo.get(Book, book.id)
   end
 
+  test "renders checked_out page", %{conn: conn} do
+    conn = get conn, "/books/checked_out"
+    assert conn.status == 200
+  end
+
+  test "checked_out renders only books that are checked out", %{conn: conn} do
+    checked_out_book = Repo.insert! %Book{title: "This book is checked out"}
+    Repo.insert! %Book{title: "This book is not checked out"}
+
+    check_out =
+      Ecto.build_assoc(checked_out_book, :check_outs, borrower_name: "Person")
+    Repo.insert!(check_out)
+
+    conn = get conn, book_path(conn, :checked_out)
+    assert html_response(conn, 200) =~ "This book is checked out"
+    refute html_response(conn, 200) =~ "This book is not checked out"
+  end
+
+  test "checked_out displays the name of the person who has checked out the book", %{conn: conn} do
+    checked_out_book = Repo.insert! %Book{title: "This book is checked out"}
+
+    check_out =
+      Ecto.build_assoc(checked_out_book, :check_outs, borrower_name: "Becca")
+    Repo.insert!(check_out)
+
+    conn = get conn, book_path(conn, :checked_out)
+    assert html_response(conn, 200) =~ "Becca"
+    refute html_response(conn, 200) =~ "This book is not checked out"
+  end
+
+  test "update_with_location updates the current location and returns the changed book", %{conn: conn} do
+    book = Repo.insert! %Book{"current_location": "A place"}
+    conn = post conn, book_check_out_path(conn, :create, book), check_out: %{"borrower_name": "Person"}
+    updated_book = BookController.update_with_location(conn)
+
+    assert is_nil(updated_book.current_location)
+  end
+
+  test "shows a form to return a book", %{conn: conn} do
+    book = Repo.insert! %Book{}
+    Ecto.build_assoc(book, :check_outs, borrower_name: "Person", borrower_id: @user.id)
+    |> Repo.insert!
+
+    conn =
+      conn
+      |> assign(:current_user, @user)
+      |> get(book_path(conn, :return, book))
+
+    assert conn.status == 200
+  end
+
+  test "only a user with a matching id can return a book", %{conn: conn} do
+    book = Repo.insert! %Book{}
+    Ecto.build_assoc(book, :check_outs, borrower_name: "Person", borrower_id: "different email")
+    |> Repo.insert!
+
+    conn = 
+      conn
+      |> assign(:current_user, @user)
+      |> get(book_path(conn, :return, book))
+
+     assert redirected_to(conn) == "/books"
+  end
+   
+  test "updates the current location when returning a book with a valid location", %{conn: conn} do
+    book = Repo.insert! %Book{}
+    location = "Chicago"
+
+    check_out =
+      Ecto.build_assoc(book, :check_outs, borrower_name: "Person")
+    Repo.insert!(check_out)
+
+    conn =
+      conn
+      |> assign(:current_user, @user)
+      |> post(book_path(conn, :process_return, book), book: %{current_location: location})
+
+    assert redirected_to(conn) == book_path(conn, :index)
+    assert Repo.get(Book, book.id).current_location == location
+  end
+
+  test "adds a return date to a check_out record when returning a book", %{conn: conn} do
+    book = Repo.insert! %Book{}
+    location = "Chicago"
+
+    check_out =
+      Ecto.build_assoc(book, :check_outs, borrower_name: "Person")
+      |> Repo.insert!
+
+    conn
+    |> assign(:current_user, @user)
+    |> post(book_path(conn, :process_return, book), book: %{current_location: location})
+
+    assert Repo.get(Bookish.CheckOut, check_out.id).return_date
+  end
+
+  test "once a book is returned, it is no longer checked out", %{conn: conn} do
+    book = Repo.insert! %Book{}
+    Ecto.build_assoc(book, :check_outs, borrower_name: "Person")
+    |> Repo.insert!
+
+    assert ResourceController.set_attributes(book).checked_out
+
+    conn
+    |> assign(:current_user, @user)
+    |> post(book_path(conn, :process_return, book), book: %{current_location: "Chicago"})
+
+    refute ResourceController.set_attributes(book).checked_out
+  end
 end

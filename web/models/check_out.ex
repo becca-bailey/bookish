@@ -1,7 +1,7 @@
 defmodule Bookish.CheckOut do
   use Bookish.Web, :model
   import Ecto.Query
-  alias Bookish.Circulation
+  alias Bookish.Resource
 
   schema "check_outs" do
     field :borrower_name, :string
@@ -38,7 +38,7 @@ defmodule Bookish.CheckOut do
   end
 
   defp validate_not_checked_out(changeset, id) do
-    if Circulation.checked_out?(id) do
+    if Resource.checked_out?(id) do
       changeset
       |> add_error(:checked_out, "Book is already checked out!")
     else

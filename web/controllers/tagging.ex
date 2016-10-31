@@ -1,7 +1,7 @@
 defmodule Bookish.Tagging do
   use Bookish.Web, :controller
   alias Bookish.Tag
-  alias Bookish.Book
+  alias Bookish.Resource
 
   def update_tags(book, tags_string) do
     list_from_string(tags_string)
@@ -50,7 +50,7 @@ defmodule Bookish.Tagging do
     tags_list = tags_to_string book.tags
     changeset = 
       book
-      |> Book.tags(%{"tags_list": tags_list})
+      |> Resource.add_tags(%{"tags_list": tags_list})
 
     case Repo.update(changeset) do
       {:ok, book} ->
