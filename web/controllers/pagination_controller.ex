@@ -23,7 +23,7 @@ defmodule Bookish.PaginationController do
       |> Resource.sorted_by_title
       |> Resource.paginate(n, @entries_per_page)
       |> BookController.load_from_query
-    render(conn, "index.html", books: resources, page_count: number_of_pages, current_page: n, filtered: false)
+    render(conn, "index.html", books: resources, page_count: number_of_pages, current_page: n)
   end
 
   def number_of_pages do

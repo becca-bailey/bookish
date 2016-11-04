@@ -11,6 +11,6 @@ defmodule Bookish.SearchController do
       Book
       |> Resource.get_by_letter(letter)
       |> BookController.load_from_query 
-    render(conn, "index.html", books: resources, page_count: Pagination.number_of_pages, current_page: 1, filtered: true)
+    render(conn, "index.html", books: resources, page_count: Pagination.number_of_pages, current_page: 1)
   end
 end

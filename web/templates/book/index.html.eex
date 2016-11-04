@@ -29,28 +29,11 @@
   <% end %>
 </div>
 
-<%= if @filtered do %>
-  <%= link to: book_path(@conn, :index) do %>
-    <p class="bold-text">
-      <i class="fa fa-arrow-left"></i> View All 
-    </p>
-  <% end %>
-<% else %>
-  <%= link to: book_path(@conn, :new) do %>
-    <p class="bold-text">
-      <i class="fa fa-plus-circle"></i> Add a book
-    </p>
-  <% end %>
+<%= link to: book_path(@conn, :new) do %>
+  <p class="bold-text">
+    <i class="fa fa-plus-circle"></i> Add a book
+  </p>
 <% end %>
 
-<div class="pagination">
-  <%= for n <- 1..@page_count do %>
-    <%= if @page_count > 1 do %>
-      <span class="<%= get_number_class(n, @current_page) %>">
-        <%= link to: book_path(@conn, :paginate, n) do %>
-          <%= n %>
-        <% end %>
-      </span>
-    <% end %>
-  <% end %>
-</div>
+<%= render Bookish.SharedView, "_pagination.html", conn: @conn, page_count: @page_count, current_page: @current_page%>
+
