@@ -3,13 +3,6 @@
 
 <div class="search">
   <h4><i class="fa fa-search"></i> Filter results</h4>
-  <div class="letters">
-    <span class="bold-text">By title:  </span>
-    <%= for letter <- ?a..?z do %>
-      <% l = char_to_string(letter) %>
-      <a href="/books/starting-with/<%= String.downcase(l) %>"><%= l %></a>
-    <% end %>
-  </div>
   <div class="availability">
     <span class="bold-text">By availability:  </span>
     <span class="option" id="available">available</span>
