@@ -24,6 +24,11 @@ defmodule Bookish.Resource do
     |> cast(params, [:tags_list])
   end
 
+  def set_virtual_attributes(struct, params \\ %{}) do
+    struct
+    |> cast(params, [:checked_out, :borrower_name])
+  end
+
   # Helpers 
   
   def checked_out?(resource_id) when is_integer(resource_id) do

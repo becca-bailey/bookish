@@ -11,6 +11,7 @@ defmodule Bookish.Book do
     field :borrower_name, :string, virtual: true
     field :tags_list, :string, virtual: true
 
+    belongs_to :book_metadata, Bookish.BookMetadata
     has_many :check_outs, Bookish.CheckOut
     many_to_many :tags, Bookish.Tag, join_through: Bookish.BookTag, on_delete: :delete_all, on_replace: :delete
     belongs_to :location, Bookish.Location
