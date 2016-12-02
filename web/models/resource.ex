@@ -98,4 +98,11 @@ defmodule Bookish.Resource do
       where: is_nil(c.return_date),
       select: b
   end
+
+  def get_checked_out(query, borrower_id) do
+    from b in query,
+      join: c in CheckOut, on: c.book_id == b.id,
+      where: is_nil(c.return_date) and c.borrower_id == ^borrower_id,
+      select: b
+  end
 end

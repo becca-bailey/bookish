@@ -56,6 +56,25 @@ defmodule Bookish.ResourceTest do
   test "get_checked_out returns an empty collection if there are no books to query" do
     assert empty? Resource.get_checked_out(Book) |> Repo.all
   end
+  
+  test "get_checked_out returns books checked out by user id" do
+    book1 = Repo.insert! %Book{title: "book 1"}
+    check_out =
+      Ecto.build_assoc(book1, :check_outs, borrower_id: "1")
+    Repo.insert!(check_out)
+    
+    book2 = Repo.insert! %Book{title: "book 2"}
+    check_out =
+      Ecto.build_assoc(book2, :check_outs, borrower_id: "2")
+    Repo.insert!(check_out)
+
+    books = 
+      Book
+      |> Resource.get_checked_out("1")
+      |> Repo.all
+
+    assert books == [book1]
+  end
 
   test "borrower_name returns the name of the person the book is checked out to" do
     book = Repo.insert! %Book{}
@@ -122,6 +141,5 @@ defmodule Bookish.ResourceTest do
 
     assert count == 5
   end
-
 
 end
