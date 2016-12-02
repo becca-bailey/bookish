@@ -3,6 +3,7 @@ defmodule Bookish.Repo.Migrations.CreateBook do
 
   def change do
     create table(:books) do
+      add :book_metadata_id, :integer
       add :title, :string
       add :author_firstname, :string
       add :author_lastname, :string

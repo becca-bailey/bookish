@@ -8,6 +8,7 @@ defmodule Bookish.BookController do
   alias Bookish.Tagging
   alias Bookish.Location
   alias Bookish.PaginationController
+  alias Bookish.BookMetadataController
 
   def index(conn, _params) do
     PaginationController.show_pages(conn, %{"number" => "1"})
@@ -24,6 +25,13 @@ defmodule Bookish.BookController do
     case Repo.insert(changeset) do
       {:ok, book} ->
         Tagging.update_tags(book, book.tags_list)
+        metadata = BookMetadataController.build_from_book(book)
+        book
+        |> Repo.preload(:book_metadata)
+        |> Ecto.Changeset.change()
+        |> Ecto.Changeset.put_assoc(:book_metadata, metadata)
+        |> Repo.update!
+
         conn
         |> put_flash(:info, "Book created successfully.")
         |> redirect(to: book_path(conn, :index))
@@ -91,6 +99,7 @@ defmodule Bookish.BookController do
     coll
     |> Repo.preload(:tags)
     |> Repo.preload(:location)
+    |> Repo.preload(:book_metadata)
   end
   
   def set_virtual_attributes(coll) do
@@ -99,17 +108,8 @@ defmodule Bookish.BookController do
   end
 
   def set_attributes(resource) do
-    if Resource.checked_out?(resource) do 
-      set_checked_out_attributes(resource)
-    else
-      resource
-    end
-  end
-
-  defp set_checked_out_attributes(resource) do
-    changeset = 
-      resource
-      |> Resource.checkout(%{"checked_out": true, "borrower_name": Resource.borrower_name(resource)})
+    params = %{"checked_out" => Resource.checked_out?(resource), "borrower_name" => Resource.borrower_name(resource)}
+    changeset = Resource.set_virtual_attributes(resource, params)
     case Repo.update(changeset) do
       {:ok, resource} ->
         resource
