@@ -3,7 +3,7 @@ defmodule Bookish.PaginationController do
 
   alias Bookish.Resource
   alias Bookish.BookController
-  alias Bookish.Book
+  alias Bookish.BookMetadata
 
   @entries_per_page 10
   
@@ -18,12 +18,13 @@ defmodule Bookish.PaginationController do
   
   def show_pages(conn, %{"number" => number}) do
     n = String.to_integer(number)
-    resources = 
-      Book
-      |> Resource.sorted_by_title
-      |> Resource.paginate(n, @entries_per_page)
-      |> BookController.load_from_query
-    render(conn, "index.html", books: resources, page_count: number_of_pages, current_page: n)
+    resources = Repo.all(BookMetadata) |> Repo.preload(:tags) 
+    # resources = 
+    #   Book
+    #   #|> Resource.sorted_by_title
+    #   |> Resource.paginate(n, @entries_per_page)
+    #   |> BookController.load_from_query
+    render(conn, "index.html", books: resources, page_count: 1, current_page: n)
   end
 
   def number_of_pages do

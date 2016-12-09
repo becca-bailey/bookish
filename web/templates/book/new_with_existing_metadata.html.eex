@@ -1,0 +1,7 @@
+<%= render Bookish.SharedView, "_header.html", conn: @conn %>
+
+<h2>Add a copy of <%= @metadata.title %></h2>
+
+<%= render "form_with_existing_metadata.html", changeset: @changeset,
+                                               locations: @locations,
+                                               action: book_metadata_book_path(@conn, :create_with_existing_metadata, @metadata) %>

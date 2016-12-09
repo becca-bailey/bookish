@@ -1,18 +1,9 @@
 <%= render Bookish.SharedView, "_header.html", conn: @conn %>
 <h2>Where is that book?</h2>
 
-<div class="search">
-  <h4><i class="fa fa-search"></i> Filter results</h4>
-  <div class="availability">
-    <span class="bold-text">By availability:  </span>
-    <span class="option" id="available">available</span>
-    <span class="option" id="checked-out">checked out</span>
-  </div>
-</div>
-
 <div class="books">
   <%= if empty?(@books) do %>
-    <p>No books match this criteria. <%= link "Add a book!", to: book_path(@conn, :new) %></p>
+    <p>No books match this criteria.</p>
   <% end %>
 
   <%= for book <- @books do %>
@@ -27,7 +18,6 @@
           </span>
 
             <%= render Bookish.SharedView, "_tags.html", conn: @conn, tags: book.tags %>
-          </span>
         </span>
 
         <span class="icons large">
@@ -35,6 +25,16 @@
         </span>
       </div>
       <div class="author"><%= book.author_firstname %> <%= book.author_lastname %></div>
+      <div class="bold-text">
+        <%= link to: book_metadata_path(@conn, :show, book) do %>
+          <i class="fa fa-search"></i> View <%= number_of_copies(book) %> 
+        <% end %>
+      </div>
+      <div class="bold-text">
+        <%= link to: book_metadata_book_path(@conn, :new_with_existing_metadata, book) do %>
+          <i class="fa fa-plus-circle"></i> Add a copy 
+        <% end %>
+      </div>
     </div>
   <% end %>
 </div>

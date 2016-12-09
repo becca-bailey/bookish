@@ -4,7 +4,7 @@ defmodule Bookish.Tag do
   schema "tags" do
     field :text, :string
 
-    many_to_many :books, Bookish.Book, join_through: Bookish.BookTag 
+    many_to_many :book_metadata, Bookish.BookMetadata, join_through: Bookish.BookMetadataTags 
 
     timestamps()
   end

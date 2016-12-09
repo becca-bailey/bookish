@@ -16,5 +16,4 @@ defmodule Bookish.PageControllerTest do
     conn = get conn, "/"
     assert html_response(conn, 200) =~ "/books/checked_out"
   end
-    
 end
