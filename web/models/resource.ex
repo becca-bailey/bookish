@@ -19,14 +19,9 @@ defmodule Bookish.Resource do
     |> validate_required([:current_location])
   end
 
-  def add_tags(struct, params \\ %{}) do
-    struct
-    |> cast(params, [:tags_list])
-  end
-
   def set_virtual_attributes(struct, params \\ %{}) do
     struct
-    |> cast(params, [:checked_out, :borrower_name])
+    |> cast(params, [:checked_out, :borrower_name, :title, :author_firstname, :author_lastname, :year])
   end
 
   # Helpers 

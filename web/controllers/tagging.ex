@@ -1,7 +1,7 @@
 defmodule Bookish.Tagging do
   use Bookish.Web, :controller
   alias Bookish.Tag
-  alias Bookish.Resource
+  alias Bookish.BookMetadata
 
   def update_tags(book, tags_string) do
     list_from_string(tags_string)
@@ -38,8 +38,8 @@ defmodule Bookish.Tagging do
     end
   end
 
-  def associate_with_resource(tag_entries, book) do
-    book
+  def associate_with_resource(tag_entries, book_metadata) do
+    book_metadata
     |> Repo.preload(:tags)
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:tags, tag_entries)
@@ -50,7 +50,7 @@ defmodule Bookish.Tagging do
     tags_list = tags_to_string book.tags
     changeset = 
       book
-      |> Resource.add_tags(%{"tags_list": tags_list})
+      |> BookMetadata.add_tags(%{"tags_list": tags_list})
 
     case Repo.update(changeset) do
       {:ok, book} ->

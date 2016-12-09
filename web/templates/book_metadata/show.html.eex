@@ -1,0 +1,46 @@
+<%= render Bookish.SharedView, "_header.html", conn: @conn %>
+
+<h2><%= @book_metadata.title %></h2>
+
+<div class="books">
+  <%= if empty?(@books) do %>
+    <p>No books match this criteria.</p>
+  <% end %>
+
+  <%= for book <- @books do %>
+    <div class="entry">
+      <div class="entry-header">
+        <div class="icons small-medium">
+          <%= render Bookish.SharedView, "_edit_delete_icons.html", conn: @conn, book: book %>
+        </div>
+        <span class="title-content">
+          <%= if book.location do %>
+            <div class="location">
+              <%= book.location.name %>
+            </div>
+          <% end %>
+        </span>
+
+        <span class="icons large">
+          <%= render Bookish.SharedView, "_edit_delete_icons.html", conn: @conn, book: book %>
+        </span>
+      </div>
+      <%= if book.checked_out do %>
+        <div class="bold-text">
+          <i class="fa fa-check-circle"></i> Checked out by <%= book.borrower_name %>
+        </div>
+      <% else %>
+        <%= book.current_location %>
+        <div class="bold-text">
+          <i class="fa fa-arrow-circle-right"></i> Check out
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<%= link to: book_metadata_book_path(@conn, :new_with_existing_metadata, @book_metadata) do %>
+  <p class="bold-text">
+    <i class="fa fa-plus-circle"></i> Add a copy
+  </p>
+<% end %>

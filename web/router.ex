@@ -33,10 +33,16 @@ defmodule Bookish.Router do
 
   scope "/", Bookish do
     pipe_through :browser 
-
+    
     get "/", PageController, :index
+    get "/book_resources/:book_metadata_id/books/new", BookController, :new_with_existing_metadata, as: :book_metadata_book
+    post "/book_resources/:book_metadata_id/books/", BookController, :create_with_existing_metadata, as: :book_metadata_book
+    
+    resources "/book_records", BookMetadataController do
+      resources "/books", BookController, only: [:new, :create]
+    end
 
-    resources "/books", BookController, except: [:show] do
+    resources "/books", BookController do
       resources "/check_outs", CheckOutController, only: [:index, :new, :create]
     end
 

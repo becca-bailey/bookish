@@ -6,8 +6,10 @@ defmodule Bookish.BookMetadata do
     field :author_firstname, :string
     field :author_lastname, :string
     field :year, :integer
+    field :tags_list, :string, virtual: true
+    many_to_many :tags, Bookish.Tag, join_through: Bookish.BookMetadataTags, on_delete: :delete_all, on_replace: :delete
 
-    has_many :books, Bookish.Book
+    has_many :books, Bookish.Book, on_delete: :delete_all, on_replace: :delete
 
     timestamps()
   end
@@ -16,8 +18,13 @@ defmodule Bookish.BookMetadata do
   
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:title, :author_firstname, :author_lastname, :year])
+    |> cast(params, [:title, :author_firstname, :author_lastname, :year, :tags_list])
     |> validate_required([:title, :author_firstname, :author_lastname, :year])
     |> validate_number(:year, greater_than_or_equal_to: 1000, less_than_or_equal_to: 9999, message: "Must be a valid year")
+  end
+  
+  def add_tags(struct, params \\ %{}) do
+    struct
+    |> cast(params, [:tags_list])
   end
 end

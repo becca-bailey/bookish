@@ -25,7 +25,7 @@
     </a>
   </div>
   <div class="box">
-    <a href=<%= book_path(@conn, :index) %>>
+    <a href=<%= book_metadata_path(@conn, :index) %>>
       <div class="look"></div>
       <p>Look for a book</p>
     </a>

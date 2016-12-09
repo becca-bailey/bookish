@@ -3,7 +3,7 @@ defmodule Bookish.TaggingTest do
 
   import Bookish.Tagging
   alias Bookish.Tag
-  alias Bookish.Book
+  alias Bookish.BookMetadata
 
   test "list_from_string returns a list of tags from a comma-separated string" do
     assert list_from_string("one, two, three") == ["one", "two", "three"]
@@ -36,21 +36,21 @@ defmodule Bookish.TaggingTest do
     assert length(Repo.all(Tag)) == 2
   end
 
-  test "associate_with_resource takes a list of tags and associates each one with the given resource" do
-    book = Repo.insert! %Book{}
+  test "associate_with_resource takes a list of tags and associates each one with the given metadata" do
+    metadata = Repo.insert! %BookMetadata{}
     get_or_create_tag(["elixir", "ruby"])
-    |> associate_with_resource(book)
+    |> associate_with_resource(metadata)
 
-    assert(book |> Repo.preload(:tags) |> has_tags(2))
+    assert (metadata |> Repo.preload(:tags) |> has_tags(2))
   end
 
-  test "update_tags takes a list of tags and adds each one to the database for the given book" do
-    book = Repo.insert! %Book{}
-    update_tags(book, "ruby, elixir, testing")
-
-    assert(book |> Repo.preload(:tags) |> has_tags(3))
+  test "update_tags takes a list of tags and adds each one to the database for the given metadata" do
+    metadata = Repo.insert! %BookMetadata{}
+    update_tags(metadata, "ruby, elixir, testing")
+  
+    assert(metadata |> Repo.preload(:tags) |> has_tags(3))
   end
-
+  
   defp has_tags(book, count) do
     length(book.tags) == count 
   end
