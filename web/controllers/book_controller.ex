@@ -73,8 +73,7 @@ defmodule Bookish.BookController do
     book = 
       Repo.get!(Book, id) 
       |> preload_associations
-      |> Tagging.set_tags_list
-    changeset = Book.changeset(book)
+    changeset = Book.with_existing_metadata(book)
     render(conn, "edit.html", book: book, changeset: changeset, locations: get_locations)
   end
 
@@ -82,11 +81,10 @@ defmodule Bookish.BookController do
     book = 
       Repo.get!(Book, id) 
       |> Repo.preload(:location)
-    changeset = Book.changeset(book, book_params)
+    changeset = Book.with_existing_metadata(book, book_params)
 
     case Repo.update(changeset) do
       {:ok, book} ->
-        Tagging.update_tags(book, book.tags_list)
         conn
         |> put_flash(:info, "Book updated successfully.")
         |> redirect(to: book_metadata_path(conn, :show, get_metadata(book |> Repo.preload(:book_metadata))))

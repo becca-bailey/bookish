@@ -3,8 +3,6 @@ defmodule Bookish.BookControllerTest do
 
   alias Bookish.Book
   alias Bookish.BookMetadata
-  alias Bookish.Tag
-  alias Bookish.BookController
 
   @book_attrs %{title: "Title", author_firstname: "First", author_lastname: "Last", year: 2016, current_location: "some content", location_id: 1}
 
@@ -24,95 +22,6 @@ defmodule Bookish.BookControllerTest do
     assert redirected_to(conn) == book_metadata_path(conn, :show, book.book_metadata)
   end
 
-  #
-  #  test "the edit page for a book with tags shows the existing tags", %{conn: conn} do
-  #
-  #    params = %{title: "The book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: "nice, short, great"}
-  #
-  #    conn
-  #    |> assign(:current_user, @user)
-  #    |> post(book_path(conn, :create), book: params)
-  #
-  #    book = List.first(Repo.all(Book))
-  #
-  #    conn =
-  #      conn
-  #      |> assign(:current_user, @user)
-  #      |> get(book_path(conn, :edit, book))
-  #
-  #    assert html_response(conn, 200) =~ params.tags_list
-  #  end
-  #
-  #  test "a list of tags can be updated for a book", %{conn: conn} do
-  #    params = %{title: "The book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: "nice, short, great"}
-  #
-  #    conn
-  #    |> assign(:current_user, @user)
-  #    |> post(book_path(conn, :create), book: params)
-  #
-  #    book = List.first(Repo.all(Book))
-  #    updated_params = %{title: "The updated book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: "good"}
-  #
-  #    conn
-  #    |> assign(:current_user, @user)
-  #    |> put(book_path(conn, :update, book), book: updated_params)
-  #    updated_book = List.first(Repo.all(Book)) |> Repo.preload(:tags)
-  #
-  #    assert length(updated_book.tags) == 1
-  #  end
-  #
-  #  test "when a book is updated with no tags, all tags are removed for that book", %{conn: conn} do
-  #    params = %{title: "The book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: "nice, short, great"}
-  #
-  #    conn
-  #    |> assign(:current_user, @user)
-  #    |> post(book_path(conn, :create), book: params)
-  #
-  #    book = List.first(Repo.all(Book))
-  #    updated_params = %{title: "The updated book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: ""}
-  #
-  #    conn
-  #    |> assign(:current_user, @user)
-  #    |> put(book_path(conn, :update, book), book: updated_params)
-  #
-  #    updated_book = List.first(Repo.all(Book)) |> Repo.preload(:tags)
-  #
-  #    assert length(updated_book.tags) == 0
-  #  end
-  #
-  #  test "tags for each book are displayed on the books index page", %{conn: conn} do
-  #    params = %{title: "The book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: "nice, short, great"}
-  #
-  #    conn
-  #    |> assign(:current_user, @user)
-  #    |> post(book_path(conn, :create), book: params)
-  #
-  #    conn = get conn, book_path(conn, :index)
-  #
-  #    assert html_response(conn, 200) =~ "nice"
-  #    assert html_response(conn, 200) =~ "short"
-  #    assert html_response(conn, 200) =~ "great"
-  #  end
-  #
-  #  test "each tag displayed on the index page is a link to its show page", %{conn: conn} do
-  #    params = %{title: "The book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: "nice, short, great"}
-  #
-  #    conn
-  #    |> assign(:current_user, @user)
-  #    |> post(book_path(conn, :create), book: params)
-  #
-  #    conn = get conn, book_path(conn, :index)
-  #    book = List.first(Repo.all(Book)) |> Repo.preload(:tags)
-  #
-  #    Enum.each(book.tags, fn(tag) ->
-  #      assert html_response(conn, 200) =~ "/tags/#{tag.id}"
-  #    end)
-  #  end
-  #
-  #  defp get_first_book(tag) do
-  #    List.first(tag.books)
-  #  end
-  #
   test "renders form to add a new book", %{conn: conn} do
     conn =
       conn
@@ -142,57 +51,59 @@ defmodule Bookish.BookControllerTest do
  
     assert redirected_to(conn) == "/"
   end
-  #
-  #  test "renders form for editing a book", %{conn: conn} do
-  #    book = Repo.insert! %Book{}
-  #
-  #    conn =
-  #      conn
-  #      |> assign(:current_user, @user)
-  #      |> get(book_path(conn, :edit, book))
-  #
-  #    assert html_response(conn, 200) =~ "Edit book"
-  #  end
-  #
-  #  test "does not allow a non-logged in user to edit a book", %{conn: conn} do
-  #    book = Repo.insert! %Book{}
-  #
-  #    conn = get conn, book_path(conn, :edit, book)
-  #
-  #    assert redirected_to(conn) == "/"
-  #  end
-  #
-  #  test "updates a book and redirects when data is valid", %{conn: conn} do
-  #    book = Repo.insert! %Book{}
-  #
-  #    conn =
-  #      conn
-  #      |> assign(:current_user, @user)
-  #      |> put(book_path(conn, :update, book), book: @valid_attrs)
-  #
-  #    assert redirected_to(conn) == book_path(conn, :index)
-  #    assert Repo.get_by(Book, @valid_attrs)
-  #  end
-  #
-  #  test "does not update book and renders errors when data is invalid", %{conn: conn} do
-  #    book = Repo.insert! %Book{}
-  #
-  #    conn =
-  #      conn
-  #      |> assign(:current_user, @user)
-  #      |> put(book_path(conn, :update, book), book: @invalid_attrs)
-  #
-  #    assert html_response(conn, 200) =~ "Edit book"
-  #  end
-  #
-  #  test "does not allow a non-logged in user to update a book", %{conn: conn} do
-  #    book = Repo.insert! %Book{}
-  #
-  #    conn = put conn, book_path(conn, :delete, book)
-  #
-  #    assert redirected_to(conn) == "/"
-  #  end
-  #
+ 
+  test "renders form for editing a book", %{conn: conn} do
+    book = Repo.insert! %Book{}
+ 
+    conn =
+      conn
+      |> assign(:current_user, @user)
+      |> get(book_path(conn, :edit, book))
+ 
+    assert html_response(conn, 200) =~ "Edit book"
+  end
+  
+  test "does not allow a non-logged in user to edit a book", %{conn: conn} do
+    book = Repo.insert! %Book{}
+
+    conn = get conn, book_path(conn, :edit, book)
+
+    assert redirected_to(conn) == "/"
+  end
+
+  test "updates a book and redirects when data is valid", %{conn: conn} do
+    book_metadata = Repo.insert! %BookMetadata{}
+    book = Repo.insert! %Book{book_metadata: book_metadata}
+    params = %{location_id: 1, current_location: "location"}
+
+    conn =
+      conn
+      |> assign(:current_user, @user)
+      |> put(book_path(conn, :update, book), book: params)
+
+    assert redirected_to(conn) == book_metadata_path(conn, :show, book_metadata)
+    assert Repo.get_by(Book, params)
+  end
+
+  test "does not update book and renders errors when data is invalid", %{conn: conn} do
+    book = Repo.insert! %Book{}
+  
+    conn =
+      conn
+      |> assign(:current_user, @user)
+      |> put(book_path(conn, :update, book), book: @invalid_attrs)
+  
+    assert html_response(conn, 200) =~ "Edit book"
+  end
+ 
+  test "does not allow a non-logged in user to update a book", %{conn: conn} do
+    book = Repo.insert! %Book{}
+ 
+    conn = put conn, book_path(conn, :delete, book)
+ 
+    assert redirected_to(conn) == "/"
+  end
+  
   test "deletes a book", %{conn: conn} do
     book_metadata = Repo.insert! %BookMetadata{}
     book = Repo.insert! %Book{book_metadata: book_metadata}
