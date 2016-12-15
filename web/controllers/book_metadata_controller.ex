@@ -2,6 +2,7 @@ defmodule Bookish.BookMetadataController do
   use Bookish.Web, :controller
 
   alias Bookish.BookMetadata
+  alias Bookish.Book
   alias Bookish.Tagging
 
   def index(conn, _params) do
@@ -27,7 +28,27 @@ defmodule Bookish.BookMetadataController do
 
   def show(conn, %{"id" => id}) do
     book_metadata = Repo.get!(BookMetadata, id) |> Repo.preload(:books)
-    render(conn, "show.html", book_metadata: book_metadata, books: book_metadata.books |> Repo.preload(:location))
+    render(conn, "show.html", book_metadata: book_metadata, books: load_books(book_metadata))
+  end
+
+  defp load_books(book_metadata) do
+    book_metadata.books 
+    |> Repo.preload(:location)
+    |> set_virtual_attributes
+  end
+  
+  defp set_virtual_attributes(coll) do
+    coll 
+    |> Enum.map(&(set_attributes(&1)))
+  end
+  
+  defp set_attributes(book) do
+    params = %{"checked_out" => Book.checked_out?(book), "borrower_name" => Book.borrower_name(book)}
+    changeset = Book.set_checked_out(book, params)
+    case Repo.update(changeset) do
+      {:ok, book} ->
+        book
+    end
   end
 
   def build_from_book(book) do

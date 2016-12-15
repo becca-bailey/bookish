@@ -8,7 +8,7 @@
   <% end %>
 
   <%= for book <- @books do %>
-    <div class="entry">
+    <div class="entry <%= get_class_name(book) %>">
       <div class="entry-header">
         <div class="icons small-medium">
           <%= render Bookish.SharedView, "_edit_delete_icons.html", conn: @conn, book: book %>
@@ -31,9 +31,11 @@
         </div>
       <% else %>
         <%= book.current_location %>
-        <div class="bold-text">
-          <i class="fa fa-arrow-circle-right"></i> Check out
-        </div>
+        <%= link to: book_check_out_path(@conn, :create, book), method: :post do %>
+          <div class="bold-text">
+            <i class="fa fa-arrow-circle-right"></i> Check out
+          </div>
+        <% end %>
       <% end %>
     </div>
   <% end %>

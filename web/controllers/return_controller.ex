@@ -2,7 +2,6 @@ defmodule Bookish.ReturnController do
   use Bookish.Web, :controller
 
   alias Bookish.Book
-  alias Bookish.Resource
   alias Bookish.CheckOut
   alias Bookish.AuthController, as: Auth
 
@@ -11,35 +10,35 @@ defmodule Bookish.ReturnController do
   plug Bookish.Plugs.AssignBook
 
   def return(conn, %{"book_id" => id}) do
-    resource = Repo.get!(Book, id)
+    book = Repo.get!(Book, id)
     current_user = Auth.get_user(conn)
 
-    try_return(conn, current_user.id, Resource.borrower_id(resource), resource)
+    try_return(conn, current_user.id, Book.borrower_id(book), book)
   end
 
   def process_return(conn, %{"book_id" => id, "book" => book_params}) do
-    resource = Repo.get!(Book, id)
-    changeset = Resource.return(resource, book_params)
+    book = Repo.get!(Book, id)
+    changeset = Book.return(book, book_params)
 
     case Repo.update(changeset) do
-      {:ok, resource} ->
-        add_return_date(resource)
+      {:ok, book} ->
+        add_return_date(book)
         conn
         |> put_flash(:info, "Book has been returned!")
-        |> redirect(to: book_path(conn, :index))
+        |> redirect(to: book_metadata_path(conn, :index))
       {:error, changeset} ->
-        render(conn, "return.html", book: resource, changeset: changeset)
+        render(conn, "return.html", book: book, changeset: changeset)
     end
   end
   
   defp try_return(conn, current_user_id, borrower_id, book) when current_user_id == borrower_id do
-    changeset = Resource.return(%Bookish.Book{})
+    changeset = Book.return(%Bookish.Book{})
     render(conn, "return.html", book: book, changeset: changeset) 
   end
 
   defp try_return(conn, _, _, _) do conn
     |> put_flash(:error, "You cannot return someone else's book!")
-    |> redirect(to: book_path(conn, :index))
+    |> redirect(to: book_metadata_path(conn, :index))
   end
   
   defp add_return_date(book) do
@@ -48,7 +47,7 @@ defmodule Bookish.ReturnController do
       |> DateTime.to_date 
       
     changeset = 
-      Resource.get_first_record(book.id)
+      Book.get_first_record(book.id)
       |> CheckOut.return(%{"return_date": date})
 
     Repo.update(changeset)
