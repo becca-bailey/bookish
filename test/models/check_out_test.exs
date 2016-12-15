@@ -8,10 +8,10 @@ defmodule Bookish.CheckOutTest do
   @valid_attrs %{borrower_name: "A person", book_id: 1, borrower_id: "email"}
   @invalid_attrs %{}
 
-  test "check-out is valid with borrower_name and book_id" do
-    changeset = CheckOut.changeset(%CheckOut{}, @valid_attrs)
-    assert changeset.valid?
-  end
+  #  test "check-out is valid with borrower_name and book_id" do
+  #    changeset = CheckOut.changeset(%CheckOut{}, @valid_attrs)
+  #    assert changeset.valid?
+  #  end
 
   test "check-out is invalid with no attributes" do
     changeset = CheckOut.changeset(%CheckOut{}, @invalid_attrs)

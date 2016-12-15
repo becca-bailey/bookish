@@ -9,7 +9,7 @@
           <h3><%= book.title %></h3>
         </span>
       </div>
-      <%= render Bookish.SharedView, "_book_details.html", conn: @conn, book: book %>
+      <div class="author"><%= book.author_firstname %> <%= book.author_lastname %></div>
       <%= link to: return_path(@conn, :return, book) do %>
         <div class="bold-text">
           <i class="fa fa-arrow-circle-left"></i> Return 
@@ -19,7 +19,7 @@
   <% end %>
 </div>
 <br>
-<%= link to: book_path(@conn, :index) do %>
+<%= link to: book_metadata_path(@conn, :index) do %>
   <div class="bold-text">
     <i class="fa fa-arrow-left"></i> View All 
   </div>

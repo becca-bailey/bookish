@@ -6,7 +6,6 @@ defmodule Bookish.CheckOutController do
 
   alias Bookish.CheckOut
   alias Bookish.Book
-  alias Bookish.Resource
   alias Bookish.AuthController, as: Auth
 
   def index(conn, _params) do
@@ -24,14 +23,14 @@ defmodule Bookish.CheckOutController do
       |> CheckOut.changeset(check_out_params)
 
     case Repo.insert(changeset) do
-      {:ok, _check_out} ->
+      {:ok, check_out} ->
         conn
         |> put_flash(:info, "Book has been checked out!")
-        |> redirect(to: book_path(conn, :index))
+        |> redirect(to: book_metadata_path(conn, :show, get_associated_metadata(check_out |> Repo.preload(:book))))
       {:error, _changeset} ->
         conn
         |> put_flash(:error, "Book cannot be checked out")
-        |> redirect(to: book_path(conn, :index))
+        |> redirect(to: book_metadata_path(conn, :index))
     end
   end
   
@@ -39,7 +38,7 @@ defmodule Bookish.CheckOutController do
     resource = conn.assigns[:book]
     changeset = 
       resource
-      |> Resource.checkout(%{"current_location": ""})
+      |> Book.checkout(%{"current_location": ""})
       
     case Repo.update (changeset) do
       {:ok, resource} ->
@@ -55,5 +54,10 @@ defmodule Bookish.CheckOutController do
       {:ok, _book} ->
         conn
     end
+  end
+
+  defp get_associated_metadata(check_out) do
+    book = check_out.book |> Repo.preload(:book_metadata)
+    book.book_metadata
   end
 end

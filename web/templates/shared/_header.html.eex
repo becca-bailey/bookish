@@ -5,7 +5,7 @@
       <%= link to: book_path(@conn, :new) do %>
         <i class="fa fa-plus-circle"></i> add
       <% end %>
-      <%= link to: book_path(@conn, :index) do %>
+      <%= link to: book_metadata_path(@conn, :index) do %>
         <i class="fa fa-search"></i> look
       <% end %>
       <%= link to: book_path(@conn, :checked_out) do %>

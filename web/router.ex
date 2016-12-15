@@ -20,6 +20,7 @@ defmodule Bookish.Router do
     get "/checked_out", BookController, :checked_out, as: :book
     get "/:book_id/return", ReturnController, :return, as: :return
     post "/:book_id/return", ReturnController, :process_return, as: :return
+    put "/:book_id/return", ReturnController, :process_return, as: :return
   end
 
   scope "/auth", Bookish do
@@ -35,14 +36,13 @@ defmodule Bookish.Router do
     pipe_through :browser 
     
     get "/", PageController, :index
-    get "/book_resources/:book_metadata_id/books/new", BookController, :new_with_existing_metadata, as: :book_metadata_book
-    post "/book_resources/:book_metadata_id/books/", BookController, :create_with_existing_metadata, as: :book_metadata_book
-    
+    get "/book_records/:book_metadata_id/books/new", BookController, :new_with_existing_metadata, as: :book_metadata_book
+    post "/book_records/:book_metadata_id/books/", BookController, :create_with_existing_metadata, as: :book_metadata_book
     resources "/book_records", BookMetadataController do
       resources "/books", BookController, only: [:new, :create]
     end
 
-    resources "/books", BookController do
+    resources "/books", BookController, except: [:index] do
       resources "/check_outs", CheckOutController, only: [:index, :new, :create]
     end
 

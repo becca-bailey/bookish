@@ -1,7 +1,7 @@
 defmodule Bookish.CheckOut do
   use Bookish.Web, :model
   import Ecto.Query
-  alias Bookish.Resource
+  alias Bookish.Book
 
   schema "check_outs" do
     field :borrower_name, :string
@@ -9,7 +9,7 @@ defmodule Bookish.CheckOut do
     field :return_date, Ecto.Date
     timestamps()
 
-    belongs_to :book, Bookish.Book
+    belongs_to :book, Book
   end
 
   @doc """
@@ -38,7 +38,7 @@ defmodule Bookish.CheckOut do
   end
 
   defp validate_not_checked_out(changeset, id) do
-    if Resource.checked_out?(id) do
+    if Book.checked_out?(id) do
       changeset
       |> add_error(:checked_out, "Book is already checked out!")
     else

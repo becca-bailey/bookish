@@ -4,7 +4,6 @@ defmodule Bookish.BookController do
   plug Bookish.Plugs.RequireAuth when action in [:new, :create, :edit, :update, :delete]
 
   alias Bookish.Book
-  alias Bookish.Resource
   alias Bookish.Tagging
   alias Bookish.Location
   alias Bookish.PaginationController
@@ -34,12 +33,12 @@ defmodule Bookish.BookController do
 
     case Repo.insert(changeset) do
       {:ok, book} ->
-        book
-        |> associate_metadata(BookMetadataController.build_from_book book)
+        metadata = BookMetadataController.build_from_book book 
+        associate_metadata(book, metadata)
 
         conn
         |> put_flash(:info, "Book created successfully.")
-        |> redirect(to: book_path(conn, :index))
+        |> redirect(to: book_metadata_path(conn, :show, metadata))
       {:error, changeset} ->
         render(conn, "new.html", changeset: changeset, locations: get_locations)
     end
@@ -90,10 +89,14 @@ defmodule Bookish.BookController do
         Tagging.update_tags(book, book.tags_list)
         conn
         |> put_flash(:info, "Book updated successfully.")
-        |> redirect(to: book_path(conn, :index))
+        |> redirect(to: book_metadata_path(conn, :show, get_metadata(book |> Repo.preload(:book_metadata))))
       {:error, changeset} ->
         render(conn, "edit.html", book: book, changeset: changeset, locations: get_locations)
     end
+  end
+
+  defp get_metadata(book) do
+    book.book_metadata
   end
 
   def delete(conn, %{"id" => id}) do
@@ -102,13 +105,14 @@ defmodule Bookish.BookController do
 
     conn
     |> put_flash(:info, "Book deleted successfully.")
-    |> redirect(to: book_path(conn, :index))
+    |> redirect(to: book_metadata_path(conn, :show, get_metadata(book |> Repo.preload(:book_metadata))))
   end
   
   def checked_out(conn, _params) do
     books = 
-      Resource.get_checked_out(Book) 
+      Book.get_checked_out(Book) 
       |> Repo.all
+      |> preload_associations
       |> set_virtual_attributes
     render(conn, "checked_out.html", books: books)
   end
@@ -127,7 +131,6 @@ defmodule Bookish.BookController do
   
   defp preload_associations(coll) do
     coll
-    |> Repo.preload(:tags)
     |> Repo.preload(:location)
     |> Repo.preload(:book_metadata)
   end
@@ -137,12 +140,12 @@ defmodule Bookish.BookController do
     |> Enum.map(&(set_attributes(&1)))
   end
 
-  def set_attributes(resource) do
-    params = %{"checked_out" => Resource.checked_out?(resource), "borrower_name" => Resource.borrower_name(resource), "title" => get_title(resource), "author_firstname" => get_author_firstname(resource), "author_lastname" => get_author_lastname(resource), "year" => get_year(resource)}
-    changeset = Resource.set_virtual_attributes(resource, params)
+  def set_attributes(book) do
+    params = %{"checked_out" => Book.checked_out?(book), "borrower_name" => Book.borrower_name(book), "title" => get_title(book), "author_firstname" => get_author_firstname(book), "author_lastname" => get_author_lastname(book), "year" => get_year(book)}
+    changeset = Book.set_virtual_attributes(book, params)
     case Repo.update(changeset) do
-      {:ok, resource} ->
-        resource
+      {:ok, book} ->
+        book
     end
   end
 
