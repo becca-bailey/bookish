@@ -1,0 +1,49 @@
+<%= form_for @changeset, @action, fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <i class="fa fa-exclamation-circle"></i> Oops, something went wrong! Please check the errors below.
+    </div>
+  <% end %>
+  <div class="form-container">
+
+    <div class="form-group">
+      <%= label f, :title, class: "control-label" %>
+      <%= text_input f, :title, class: "form-control", placeholder: "Programming for Dummies" %>
+    </div>
+    <div class="form-error">
+      <%= error_tag f, :title %>
+    </div>
+
+    <div class="form-group">
+      <%= label f, "Author", class: "control-label" %>
+      <div class="input-group">
+        <%= text_input f, :author_firstname, class: "form-control", placeholder: "Jane" %>
+        <%= text_input f, :author_lastname, class: "form-control", placeholder: "Smith" %>
+      </div>
+    </div>
+    <div class="form-error error-group">
+      <%= error_tag f, :author_firstname %>
+      <%= error_tag f, :author_lastname %>
+    </div>
+
+    <div class="form-group">
+      <%= label f, :year, class: "control-label" %>
+      <%= number_input f, :year, class: "form-control", placeholder: 2016 %>
+    </div>
+    <div class="form-error">
+      <%= error_tag f, :year %>
+    </div>
+
+    <div class="form-group">
+      <%= label f, "Tags", class: "control-label" %>
+      <%= text_input f, :tags_list, class: "form-control", placeholder: "ruby, legacy systems, mindblowing" %>
+    </div>
+    <div class="form-error">
+      <%= error_tag f, :tags_list %>
+    </div>
+
+    <div class="form-group submit">
+      <%= submit "Submit", class: "btn btn-primary" %>
+    </div>
+  </div>
+<% end %>

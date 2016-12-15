@@ -10,7 +10,12 @@
     <div class="entry">
       <div class="entry-header">
         <div class="icons small-medium">
-          <%= render Bookish.SharedView, "_edit_delete_icons.html", conn: @conn, book: book %>
+          <%= link to: book_metadata_path(@conn, :edit, book) do %>
+            <i class="fa fa-edit"></i>
+          <% end %>
+          <%= link to: book_metadata_path(@conn, :delete, book), method: :delete, data: [confirm: "Are you sure you want to delete this book?"] do %>
+            <i class="fa fa-remove"></i>
+          <% end %>
         </div>
         <span class="title-content">
           <span class="title">
@@ -21,7 +26,12 @@
         </span>
 
         <span class="icons large">
-          <%= render Bookish.SharedView, "_edit_delete_icons.html", conn: @conn, book: book %>
+          <%= link to: book_metadata_path(@conn, :edit, book) do %>
+            <i class="fa fa-edit"></i>
+          <% end %>
+          <%= link to: book_metadata_path(@conn, :delete, book), method: :delete, data: [confirm: "Are you sure you want to delete this book?"] do %>
+            <i class="fa fa-remove"></i>
+          <% end %>
         </span>
       </div>
       <div class="author"><%= book.author_firstname %> <%= book.author_lastname %></div>

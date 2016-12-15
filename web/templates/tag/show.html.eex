@@ -38,7 +38,7 @@
     </div>
   <% end %>
 </div>
-<br>
+<br><br>
 <%= link to: book_metadata_path(@conn, :index) do %>
   <div class="bold-text">
     <i class="fa fa-arrow-left"></i> View All 

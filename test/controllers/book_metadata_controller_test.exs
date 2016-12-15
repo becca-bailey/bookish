@@ -25,7 +25,7 @@ defmodule Bookish.BookMetadataControllerTest do
   end
 
   test "shows book title, author, and year on index", %{conn: conn} do
-    book_metadata = Repo.insert! %BookMetadata{title: "title", author_firstname: "first", author_lastname: "last", year: 2016} 
+    Repo.insert! %BookMetadata{title: "title", author_firstname: "first", author_lastname: "last", year: 2016} 
     conn = get conn, book_metadata_path(conn, :index)
 
     assert html_response(conn, 200) =~ "title"
@@ -86,6 +86,121 @@ defmodule Bookish.BookMetadataControllerTest do
       |> put(book_metadata_path(conn, :update, book_metadata), book_metadata: @valid_attrs)
 
       assert redirected_to(conn) == book_metadata_path(conn, :index)
+      assert get_flash(conn, :info) == "Book updated successfully."
+  end
+ 
+  test "renders form for editing book_metadata", %{conn: conn} do
+    book_metadata = Repo.insert! %BookMetadata{}
+ 
+    conn =
+      conn
+      |> assign(:current_user, @user)
+      |> get(book_metadata_path(conn, :edit, book_metadata))
+ 
+    assert conn.status == 200 
+  end
+ 
+  test "does not allow a non-logged in user to edit book_metadata", %{conn: conn} do
+    book_metadata = Repo.insert! %BookMetadata{}
+  
+    conn = get conn, book_metadata_path(conn, :edit, book_metadata)
+  
+    assert redirected_to(conn) == "/"
+  end
+  
+  #   test "does not update book_metadata and renders errors when data is invalid", %{conn: conn} do
+  #     book_metadata = Repo.insert! %BookMetadata{}
+  #  
+  #     conn =
+  #       conn
+  #       |> assign(:current_user, @user)
+  #       |> put(book_metadata_path(conn, :update, book_metadata), book: @invalid_attrs)
+  #  
+  #     assert conn.status == 200 
+  #   end
+  
+  test "the edit page for a book with tags shows the existing tags", %{conn: conn} do
+  
+    params = %{title: "The book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: "nice, short, great"}
+  
+    conn
+    |> assign(:current_user, @user)
+    |> post(book_metadata_path(conn, :create), book_metadata: params)
+  
+    book_metadata = List.first(Repo.all(BookMetadata))
+  
+    conn =
+      conn
+      |> assign(:current_user, @user)
+      |> get(book_metadata_path(conn, :edit, book_metadata))
+  
+    assert html_response(conn, 200) =~ params.tags_list
+  end
+  
+  test "a list of tags can be updated for a book", %{conn: conn} do
+    params = %{title: "The book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: "nice, short, great"}
+  
+    conn
+    |> assign(:current_user, @user)
+    |> post(book_metadata_path(conn, :create), book_metadata: params)
+  
+    book_metadata = List.first(Repo.all(BookMetadata))
+    updated_params = %{title: "The updated book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: "good"}
+  
+    conn
+    |> assign(:current_user, @user)
+    |> put(book_metadata_path(conn, :update, book_metadata), book_metadata: updated_params)
+    updated_book = List.first(Repo.all(BookMetadata)) |> Repo.preload(:tags)
+ 
+    assert length(updated_book.tags) == 1
+  end
+ 
+  test "when a book is updated with no tags, all tags are removed for that book", %{conn: conn} do
+    params = %{title: "The book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: "nice, short, great"}
+
+    conn
+    |> assign(:current_user, @user)
+    |> post(book_metadata_path(conn, :create), book_metadata: params)
+
+    book_metadata = List.first(Repo.all(BookMetadata))
+    updated_params = %{title: "The updated book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: ""}
+
+    conn
+    |> assign(:current_user, @user)
+    |> put(book_metadata_path(conn, :update, book_metadata), book_metadata: updated_params)
+
+    updated_book = List.first(Repo.all(BookMetadata)) |> Repo.preload(:tags)
+
+    assert length(updated_book.tags) == 0
+  end
+
+  test "tags for each book are displayed on the book metadata index page", %{conn: conn} do
+    params = %{title: "The book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: "nice, short, great"}
+
+    conn
+    |> assign(:current_user, @user)
+    |> post(book_metadata_path(conn, :create), book_metadata: params)
+
+    conn = get conn, book_metadata_path(conn, :index)
+
+    assert html_response(conn, 200) =~ "nice"
+    assert html_response(conn, 200) =~ "short"
+    assert html_response(conn, 200) =~ "great"
+  end
+
+  test "each tag displayed on the index page is a link to its show page", %{conn: conn} do
+    params = %{title: "The book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: "nice, short, great"}
+
+    conn
+    |> assign(:current_user, @user)
+    |> post(book_metadata_path(conn, :create), book_metadata: params)
+
+    conn = get conn, book_metadata_path(conn, :index)
+    book = List.first(Repo.all(BookMetadata)) |> Repo.preload(:tags)
+
+    Enum.each(book.tags, fn(tag) ->
+      assert html_response(conn, 200) =~ "/tags/#{tag.id}"
+    end)
   end
 
   test "deletes book_metadata", %{conn: conn} do
