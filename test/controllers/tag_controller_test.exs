@@ -70,22 +70,22 @@ defmodule Bookish.TagControllerTest do
     assert tag
     refute tag |> Repo.preload(:book_metadata) |> has_books
   end
-  #
-  #  test "the tag show route shows a list of books with that tag", %{conn: conn} do
-  #    book = Repo.insert!(%Book{title: "Tagged book"})
-  #    tag = Repo.insert!(%Tag{text: "tag"})
-  #    
-  #    book 
-  #    |> Repo.preload(:tags)
-  #    |> Ecto.Changeset.change()
-  #    |> Ecto.Changeset.put_assoc(:tags, [tag])
-  #    |> Repo.update!
-  #
-  #    conn = get conn, tag_path(conn, :show, tag)
-  #
-  #    assert html_response(conn, 200) =~ "Tagged book" 
-  #  end
-  #
+
+  test "the tag show route shows a list of books with that tag", %{conn: conn} do
+    book_metadata = Repo.insert!(%BookMetadata{title: "Tagged book"})
+    tag = Repo.insert!(%Tag{text: "tag"})
+    
+    book_metadata 
+    |> Repo.preload(:tags)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:tags, [tag])
+    |> Repo.update!
+
+    conn = get conn, tag_path(conn, :show, tag)
+
+    assert html_response(conn, 200) =~ "Tagged book" 
+  end
+
   defp has_tags(metadata) do
     length(metadata.tags) > 0
   end

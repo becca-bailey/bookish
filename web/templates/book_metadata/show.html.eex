@@ -46,3 +46,8 @@
     <i class="fa fa-plus-circle"></i> Add a copy
   </p>
 <% end %>
+<%= link to: book_metadata_path(@conn, :index) do %>
+  <div class="bold-text">
+    <i class="fa fa-arrow-left"></i> View All 
+  </div>
+<% end %>

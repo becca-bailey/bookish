@@ -17,12 +17,12 @@ defmodule Bookish.TagController do
   end
 
   def show(conn, %{"id" => id}) do
-    tag = Repo.get!(Tag, id) |> Repo.preload(:books) 
-    books = 
-      tag.books 
+    tag = Repo.get!(Tag, id) |> Repo.preload(:book_metadata) 
+    book_metadata = 
+      tag.book_metadata 
       |> Repo.preload(:tags) 
-      |> Repo.preload(:location)
-    render(conn, "show.html", tag: tag, books: books)
+      |> Repo.preload(:books)
+    render(conn, "show.html", tag: tag, book_metadata: book_metadata)
   end
 
   def delete(conn, %{"id" => id}) do
