@@ -1,12 +1,12 @@
 defmodule Bookish.PaginationController do
   use Bookish.Web, :controller
 
-  alias Bookish.Resource
+  alias Bookish.Book
   alias Bookish.BookController
   alias Bookish.BookMetadata
 
   @entries_per_page 10
-  
+
   def paginate(conn, params) do
     case params do
       %{"number" => "1"} ->
@@ -15,11 +15,11 @@ defmodule Bookish.PaginationController do
         show_pages(conn, params)
     end
   end
-  
+
   def show_pages(conn, %{"number" => number}) do
     n = String.to_integer(number)
-    resources = Repo.all(BookMetadata) |> Repo.preload(:tags) 
-    # resources = 
+    resources = Repo.all(BookMetadata) |> Repo.preload(:tags)
+    # resources =
     #   Book
     #   #|> Resource.sorted_by_title
     #   |> Resource.paginate(n, @entries_per_page)
@@ -28,9 +28,9 @@ defmodule Bookish.PaginationController do
   end
 
   def number_of_pages do
-    count = 
+    count =
       Book
-      |> Resource.count
+      |> Book.count
       |> Repo.all
       |> List.first
     Float.ceil(count / @entries_per_page)

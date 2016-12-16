@@ -1,7 +1,7 @@
 <%= render Bookish.SharedView, "_header.html", conn: @conn %>
 <h2>Edit book</h2>
 
-<%= render "form_with_existing_metadata.html", changeset: @changeset,
+<%= render "form.html", changeset: @changeset,
                         locations: @locations,
                         action: book_path(@conn, :update, @book) %>
 
