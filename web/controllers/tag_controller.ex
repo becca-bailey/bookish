@@ -2,6 +2,7 @@ defmodule Bookish.TagController do
   use Bookish.Web, :controller
 
   alias Bookish.Tag
+  alias Bookish.Repository
 
   def create(conn, %{"tag" => tag_params}) do
     changeset = Tag.changeset(%Tag{}, tag_params)
@@ -17,18 +18,13 @@ defmodule Bookish.TagController do
   end
 
   def show(conn, %{"id" => id}) do
-    tag = Repo.get!(Tag, id) |> Repo.preload(:book_metadata) 
-    book_metadata = 
-      tag.book_metadata 
-      |> Repo.preload(:tags) 
-      |> Repo.preload(:books)
+    tag = Repository.get_tag(id)
+    book_metadata = Repository.get_metadata_from_tag(tag)
     render(conn, "show.html", tag: tag, book_metadata: book_metadata)
   end
 
   def delete(conn, %{"id" => id}) do
-    tag = Repo.get!(Tag, id)
-
-    Repo.delete!(tag)
+    Repo.delete!(Repository.get_tag(id))
 
     conn
     |> put_flash(:info, "Tag deleted successfully.")
