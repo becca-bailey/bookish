@@ -3,6 +3,7 @@ defmodule Bookish.BookTest do
 
   alias Bookish.Book
   alias Bookish.Location
+  alias Bookish.BookMetadata
   import Bookish.TestHelpers
 
   @valid_attrs %{author_firstname: "first name", author_lastname: "last name", current_location: "current location", title: "title", year: 2016, location_id: 1}
@@ -201,5 +202,21 @@ defmodule Bookish.BookTest do
       |> List.first
 
     assert count == 5
+  end
+
+  test "get_books_by_location_with_metadata return books with matching location and metadata" do
+    book_metadata = Repo.insert! %BookMetadata{}  
+    location = Repo.insert! %Location{}
+    book = Repo.insert! %Book{book_metadata: book_metadata, location: location}
+
+    result = 
+      Book
+      |> Book.get_books_for_location_with_metadata(location, book_metadata)
+      |> Repo.all
+      |> List.first
+      |> Repo.preload(:location)
+      |> Repo.preload(:book_metadata)
+
+    assert result == book
   end
 end

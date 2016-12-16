@@ -40,6 +40,7 @@ defmodule Bookish.Router do
     post "/book_records/:book_metadata_id/books/", BookController, :create_with_existing_metadata, as: :book_metadata_book
     resources "/book_records", BookMetadataController do
       resources "/books", BookController, only: [:new, :create]
+      resources "/locations", BookMetadataLocationController, only: [:show]
     end
 
     resources "/books", BookController, except: [:index] do

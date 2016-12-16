@@ -140,4 +140,12 @@ defmodule Bookish.Book do
       where: is_nil(c.return_date) and c.borrower_id == ^borrower_id,
       select: b
   end
+  
+  def get_books_for_location_with_metadata(query, location, metadata) do
+    from b in query,
+      join: d in Bookish.BookMetadata, on: b.book_metadata_id == d.id,
+      where: b.location_id == ^location.id,
+      where: d.id == ^metadata.id,
+      select: b
+  end
 end
