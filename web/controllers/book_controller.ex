@@ -1,10 +1,9 @@
 defmodule Bookish.BookController do
   use Bookish.Web, :controller
-  
+
   plug Bookish.Plugs.RequireAuth when action in [:new, :create, :edit, :update, :delete]
 
   alias Bookish.Book
-  alias Bookish.Tagging
   alias Bookish.Location
   alias Bookish.PaginationController
   alias Bookish.BookMetadataController
@@ -14,18 +13,9 @@ defmodule Bookish.BookController do
     PaginationController.show_pages(conn, %{"number" => "1"})
   end
 
-  def new_with_existing_metadata(conn, %{"book_metadata_id" => id}) do
-    metadata = Repo.get!(BookMetadata, id)
-    changeset = Book.changeset(%Book{}) 
-    render(conn, "new_with_existing_metadata.html", changeset: changeset, locations: get_locations, metadata: metadata) 
-  end
-
   def new(conn, _params) do
-    changeset = Book.changeset(%Book{}) 
+    changeset = Book.changeset(%Book{})
     render(conn, "new.html", changeset: changeset, locations: get_locations)
-  end
-
-  def show(conn, %{"id" => id}) do
   end
 
   def create(conn, %{"book" => book_params}) do
@@ -33,7 +23,7 @@ defmodule Bookish.BookController do
 
     case Repo.insert(changeset) do
       {:ok, book} ->
-        metadata = BookMetadataController.build_from_book book 
+        metadata = BookMetadataController.build_from_book book
         associate_metadata(book, metadata)
 
         conn
@@ -41,23 +31,6 @@ defmodule Bookish.BookController do
         |> redirect(to: book_metadata_path(conn, :show, metadata))
       {:error, changeset} ->
         render(conn, "new.html", changeset: changeset, locations: get_locations)
-    end
-  end
-
-  def create_with_existing_metadata(conn, %{"book_metadata_id" => metadata_id, "book" => book_params}) do
-    metadata = Repo.get(BookMetadata, metadata_id)
-    changeset = Book.with_existing_metadata(%Book{}, book_params)
-
-    case Repo.insert(changeset) do
-      {:ok, book} ->
-        book 
-        |> associate_metadata(metadata)
-
-        conn
-        |> put_flash(:info, "Copy has been created!")
-        |> redirect(to: book_metadata_path(conn, :show, metadata))
-      {:error, changeset} ->
-        render(conn, "new_with_existing_metadata.html", changeset: changeset, locations: get_locations, metadata: metadata)
     end
   end
 
@@ -70,16 +43,16 @@ defmodule Bookish.BookController do
   end
 
   def edit(conn, %{"id" => id}) do
-    book = 
-      Repo.get!(Book, id) 
+    book =
+      Repo.get!(Book, id)
       |> preload_associations
     changeset = Book.with_existing_metadata(book)
     render(conn, "edit.html", book: book, changeset: changeset, locations: get_locations)
   end
 
   def update(conn, %{"id" => id, "book" => book_params}) do
-    book = 
-      Repo.get!(Book, id) 
+    book =
+      Repo.get!(Book, id)
       |> Repo.preload(:location)
     changeset = Book.with_existing_metadata(book, book_params)
 
@@ -105,10 +78,10 @@ defmodule Bookish.BookController do
     |> put_flash(:info, "Book deleted successfully.")
     |> redirect(to: book_metadata_path(conn, :show, get_metadata(book |> Repo.preload(:book_metadata))))
   end
-  
+
   def checked_out(conn, _params) do
-    books = 
-      Book.get_checked_out(Book) 
+    books =
+      Book.get_checked_out(Book)
       |> Repo.all
       |> preload_associations
       |> set_virtual_attributes
@@ -116,25 +89,25 @@ defmodule Bookish.BookController do
   end
 
   defp get_locations do
-    Location.select_name 
+    Location.select_name
     |> Repo.all
   end
-  
+
   def load_from_query(query) do
     query
     |> Repo.all
     |> preload_associations
-    |> set_virtual_attributes 
+    |> set_virtual_attributes
   end
-  
+
   defp preload_associations(coll) do
     coll
     |> Repo.preload(:location)
     |> Repo.preload(:book_metadata)
   end
-  
+
   def set_virtual_attributes(coll) do
-    coll 
+    coll
     |> Enum.map(&(set_attributes(&1)))
   end
 
@@ -164,7 +137,7 @@ defmodule Bookish.BookController do
       "No first name"
     end
   end
-  
+
   defp get_author_lastname(book) do
     if book.book_metadata do
       book.book_metadata.author_lastname
@@ -177,7 +150,7 @@ defmodule Bookish.BookController do
     if book.book_metadata do
       book.book_metadata.year
     else
-      2016 
+      2016
     end
   end
 end

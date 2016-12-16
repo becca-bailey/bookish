@@ -9,7 +9,7 @@ defmodule Bookish.BookControllerTest do
   @valid_attrs %{current_location: "some content", location_id: 1}
   @invalid_attrs %{}
   @user %{id: "email", name: "user"}
-  
+
   test "creates new book and redirects when data is valid", %{conn: conn} do
     conn =
       conn
@@ -33,36 +33,25 @@ defmodule Bookish.BookControllerTest do
 
   test "does not allow a non-logged in user to add a new book", %{conn: conn} do
     conn = get conn, book_path(conn, :new)
-  
+
     assert redirected_to(conn) == "/"
   end
-  
+
   test "does not create book and renders errors when data is invalid", %{conn: conn} do
     conn =
       conn
       |> assign(:current_user, @user)
       |> post(book_path(conn, :create), book: @invalid_attrs)
-  
+
     assert html_response(conn, 200) =~ "New book"
   end
-  
+
   test "does not allow a non-logged in user to create a book", %{conn: conn} do
     conn = post conn, book_path(conn, :create), book: @valid_attrs
- 
+
     assert redirected_to(conn) == "/"
   end
- 
-  test "renders form for editing a book", %{conn: conn} do
-    book = Repo.insert! %Book{}
- 
-    conn =
-      conn
-      |> assign(:current_user, @user)
-      |> get(book_path(conn, :edit, book))
- 
-    assert html_response(conn, 200) =~ "Edit book"
-  end
-  
+
   test "does not allow a non-logged in user to edit a book", %{conn: conn} do
     book = Repo.insert! %Book{}
 
@@ -85,43 +74,33 @@ defmodule Bookish.BookControllerTest do
     assert Repo.get_by(Book, params)
   end
 
-  test "does not update book and renders errors when data is invalid", %{conn: conn} do
-    book = Repo.insert! %Book{}
-  
-    conn =
-      conn
-      |> assign(:current_user, @user)
-      |> put(book_path(conn, :update, book), book: @invalid_attrs)
-  
-    assert html_response(conn, 200) =~ "Edit book"
-  end
- 
+
   test "does not allow a non-logged in user to update a book", %{conn: conn} do
     book = Repo.insert! %Book{}
- 
+
     conn = put conn, book_path(conn, :delete, book)
- 
+
     assert redirected_to(conn) == "/"
   end
-  
+
   test "deletes a book", %{conn: conn} do
     book_metadata = Repo.insert! %BookMetadata{}
     book = Repo.insert! %Book{book_metadata: book_metadata}
- 
+
     conn =
       conn
       |> assign(:current_user, @user)
       |> delete(book_path(conn, :delete, book))
- 
+
     assert redirected_to(conn) == book_metadata_path(conn, :show, book_metadata)
     refute Repo.get(Book, book.id)
   end
- 
+
   test "does not allow a non-logged in user to delete a book", %{conn: conn} do
     book = Repo.insert! %Book{}
- 
+
     conn = delete conn, book_path(conn, :delete, book)
- 
+
     assert redirected_to(conn) == "/"
     assert Repo.get(Book, book.id)
   end
@@ -136,11 +115,11 @@ defmodule Bookish.BookControllerTest do
     checked_out_book = Repo.insert! %Book{book_metadata: book_metadata}
     book_metadata2 = Repo.insert! %BookMetadata{title: "This book is not checked out"}
     Repo.insert! %Book{book_metadata: book_metadata2}
- 
+
     check_out =
       Ecto.build_assoc(checked_out_book, :check_outs, borrower_name: "Person")
     Repo.insert!(check_out)
- 
+
     conn = get conn, book_path(conn, :checked_out)
     assert html_response(conn, 200) =~ "This book is checked out"
     refute html_response(conn, 200) =~ "This book is not checked out"

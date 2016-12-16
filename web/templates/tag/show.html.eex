@@ -27,12 +27,12 @@
       <div class="author"><%= book.author_firstname %> <%= book.author_lastname %></div>
       <div class="bold-text">
         <%= link to: book_metadata_path(@conn, :show, book) do %>
-          <i class="fa fa-search"></i> View <%= number_of_copies(book) %> 
+          <i class="fa fa-search"></i> View <%= number_of_copies(book) %>
         <% end %>
       </div>
       <div class="bold-text">
-        <%= link to: book_metadata_book_path(@conn, :new_with_existing_metadata, book) do %>
-          <i class="fa fa-plus-circle"></i> Add a copy 
+        <%= link to: book_metadata_book_metadata_book_path(@conn, :new, book) do %>
+          <i class="fa fa-plus-circle"></i> Add a copy
         <% end %>
       </div>
     </div>
@@ -41,6 +41,6 @@
 <br><br>
 <%= link to: book_metadata_path(@conn, :index) do %>
   <div class="bold-text">
-    <i class="fa fa-arrow-left"></i> View All 
+    <i class="fa fa-arrow-left"></i> View All
   </div>
 <% end %>
