@@ -54,10 +54,10 @@ defmodule Bookish.BookController do
         |> associate_metadata(metadata)
 
         conn
-        |> put_flash(:info, "Book has been created!")
-        |> redirect(to: book_metadata_path(conn, :index))
+        |> put_flash(:info, "Copy has been created!")
+        |> redirect(to: book_metadata_path(conn, :show, metadata))
       {:error, changeset} ->
-        render(conn, "new_with_existing_metatags.html", changeset: changeset, location: get_locations, metadata: metadata)
+        render(conn, "new_with_existing_metadata.html", changeset: changeset, locations: get_locations, metadata: metadata)
     end
   end
 

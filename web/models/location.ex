@@ -17,6 +17,8 @@ defmodule Bookish.Location do
     |> cast(params, [:name])
     |> validate_required([:name])
   end
+  
+  # Queries
 
   def select_name do
     from l in Bookish.Location,

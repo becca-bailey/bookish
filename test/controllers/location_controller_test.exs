@@ -2,7 +2,6 @@ defmodule Bookish.LocationControllerTest do
   use Bookish.ConnCase
 
   alias Bookish.Location
-  alias Bookish.Book
 
   @valid_attrs %{name: "some content"}
   @invalid_attrs %{}

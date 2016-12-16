@@ -1,0 +1,4 @@
+defmodule Bookish.BookMetadataLocationView do
+  use Bookish.Web, :view
+  import Bookish.ViewHelpers
+end

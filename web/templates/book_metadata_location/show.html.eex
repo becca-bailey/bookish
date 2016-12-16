@@ -1,7 +1,6 @@
 <%= render Bookish.SharedView, "_header.html", conn: @conn %>
 
-<h2><%= @book_metadata.title %></h2>
-
+<h2>Copies of <%= @book_metadata.title %> in <%= @location.name %></h2>
 <div class="books">
   <%= if empty?(@books) do %>
     <p>No books match this criteria.</p>
@@ -15,11 +14,9 @@
         </div>
         <span class="title-content">
           <%= if book.location do %>
-            <%= link to: book_metadata_book_metadata_location_path(@conn, :show, @book_metadata, book.location) do %>
-              <div class="location">
-                <%= book.location.name %>
-              </div>
-            <% end %>
+            <div class="location">
+              <%= book.location.name %>
+            </div>
           <% end %>
         </span>
 
@@ -42,14 +39,9 @@
     </div>
   <% end %>
 </div>
-
-<%= link to: book_metadata_book_path(@conn, :new_with_existing_metadata, @book_metadata) do %>
-  <p class="bold-text">
-    <i class="fa fa-plus-circle"></i> Add a copy
-  </p>
-<% end %>
-<%= link to: book_metadata_path(@conn, :index) do %>
+<br>
+<%= link to: book_metadata_path(@conn, :show, @book_metadata) do %>
   <div class="bold-text">
-    <i class="fa fa-arrow-left"></i> View all books 
+    <i class="fa fa-arrow-left"></i> View all copies
   </div>
 <% end %>
