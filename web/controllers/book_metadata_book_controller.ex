@@ -3,78 +3,49 @@ defmodule Bookish.BookMetadataBookController do
 
   plug Bookish.Plugs.RequireAuth when action in [:new, :create]
 
-  alias Bookish.BookMetadata
   alias Bookish.Book
-  alias Bookish.Location
+  alias Bookish.Repository
 
   def new(conn, %{"book_metadata_id" => id}) do
-    metadata = Repo.get!(BookMetadata, id)
     changeset = Book.changeset(%Book{})
-    render(conn, "new.html", changeset: changeset, locations: get_locations, metadata: metadata)
+    render(conn, "new.html", changeset: changeset, locations: Repository.get_location_names, metadata: Repository.get_metadata(id))
   end
 
   def create(conn, %{"book_metadata_id" => id, "book" => book_params}) do
-    metadata = Repo.get(BookMetadata, id)
+    metadata = Repository.get_metadata(id)
     changeset = Book.with_existing_metadata(%Book{}, book_params)
 
     case Repo.insert(changeset) do
       {:ok, book} ->
         book
-        |> associate_metadata(metadata)
+        |> Repository.associate_book_with_metadata(metadata)
 
         conn
         |> put_flash(:info, "Copy has been created!")
         |> redirect(to: book_metadata_path(conn, :show, metadata))
       {:error, changeset} ->
-        render(conn, "new.html", changeset: changeset, locations: get_locations, metadata: metadata)
+        render(conn, "new.html", changeset: changeset, locations: Repository.get_location_names, metadata: metadata)
     end
   end
 
-  def edit(conn, %{"book_metadata_id" => book_metadata_id, "id" => id}) do
-    book =
-      Repo.get!(Book, id)
-      |> preload_associations
+  def edit(conn, %{"id" => id}) do
+    book = Repository.get_book(id)
     changeset = Book.with_existing_metadata(book)
-    render(conn, "edit.html", book: book, changeset: changeset, locations: get_locations)
+    render(conn, "edit.html", book: book, changeset: changeset, locations: Repository.get_location_names)
   end
 
   def update(conn, %{"book_metadata_id" => book_metadata_id, "id" => id, "book" => book_params}) do
-    book_metadata = Repo.get!(BookMetadata, book_metadata_id)
-    book =
-      Repo.get!(Book, id)
-      |> Repo.preload(:location)
+    book_metadata = Repository.get_metadata(book_metadata_id)
+    book = Repository.get_book(id)
     changeset = Book.with_existing_metadata(book, book_params)
 
     case Repo.update(changeset) do
-      {:ok, book} ->
+      {:ok, _book} ->
         conn
         |> put_flash(:info, "Book updated successfully.")
         |> redirect(to: book_metadata_path(conn, :show, book_metadata))
       {:error, changeset} ->
-        render(conn, "edit.html", book: book, changeset: changeset, locations: get_locations)
+        render(conn, "edit.html", book: book, changeset: changeset, locations: Repository.get_location_names)
     end
   end
-
-
-  # Shared with BookController
-
-  defp get_locations do
-    Location.select_name
-    |> Repo.all
-  end
-
-  defp associate_metadata(book, metadata) do
-    book
-    |> Repo.preload(:book_metadata)
-    |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:book_metadata, metadata)
-    |> Repo.update!
-  end
-
-  defp preload_associations(coll) do
-    coll
-    |> Repo.preload(:location)
-    |> Repo.preload(:book_metadata)
-  end
-
 end

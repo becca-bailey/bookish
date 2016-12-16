@@ -1,22 +1,19 @@
 defmodule Bookish.BookMetadataController do
   use Bookish.Web, :controller
-  
+
   plug Bookish.Plugs.RequireAuth when action in [:new, :create, :edit, :update, :delete]
 
   alias Bookish.BookMetadata
-  alias Bookish.Book
   alias Bookish.Tagging
+  alias Bookish.Repository
 
   def index(conn, _params) do
-    book_records = Repo.all(BookMetadata) 
-                   |> Repo.preload(:tags) 
-                   |> Repo.preload(:books)
-    render(conn, "index.html", books: book_records, page_count: 1, current_page: 1)
+    render(conn, "index.html", books: Repository.get_metadata, page_count: 1, current_page: 1)
   end
-  
+
   def show(conn, %{"id" => id}) do
-    book_metadata = Repo.get!(BookMetadata, id) |> Repo.preload(:books)
-    render(conn, "show.html", book_metadata: book_metadata, books: load_books(book_metadata))
+    book_metadata = Repository.get_metadata(id)
+    render(conn, "show.html", book_metadata: book_metadata, books: Repository.load_books_from_metadata(book_metadata))
   end
 
   def create(conn, %{"book_metadata" => book_metadata_params}) do
@@ -32,22 +29,21 @@ defmodule Bookish.BookMetadataController do
         render(conn, "new.html", changeset: changeset)
     end
   end
-  
+
   def edit(conn, %{"id" => id}) do
-    book_metadata = 
-      Repo.get!(BookMetadata, id)
-      |> Repo.preload(:tags)
+    book_metadata =
+      Repository.get_metadata(id)
       |> Tagging.set_tags_list
     changeset = BookMetadata.changeset(book_metadata)
     render(conn, "edit.html", book_metadata: book_metadata, changeset: changeset)
   end
 
   def update(conn, %{"id" => id, "book_metadata" => book_metadata_params}) do
-    book_metadata = Repo.get!(BookMetadata, id)
+    book_metadata = Repository.get_metadata(id)
     changeset = BookMetadata.changeset(book_metadata, book_metadata_params)
 
     case Repo.update(changeset) do
-      {:ok, book} -> 
+      {:ok, book} ->
         Tagging.update_tags(book, book.tags_list)
         conn
         |> put_flash(:info, "Book updated successfully.")
@@ -57,40 +53,21 @@ defmodule Bookish.BookMetadataController do
     end
   end
 
-  defp load_books(book_metadata) do
-    book_metadata.books 
-    |> Repo.preload(:location)
-    |> set_virtual_attributes
-  end
-  
-  defp set_virtual_attributes(coll) do
-    coll 
-    |> Enum.map(&(set_attributes(&1)))
-  end
-  
-  defp set_attributes(book) do
-    params = %{"checked_out" => Book.checked_out?(book), "borrower_name" => Book.borrower_name(book)}
-    changeset = Book.set_checked_out(book, params)
-    case Repo.update(changeset) do
-      {:ok, book} ->
-        book
-    end
-  end
-
   def build_from_book(book) do
-    params = %{"title" => book.title, "author_firstname" => book.author_firstname, "author_lastname" => book.author_lastname, "year" => book.year , "tags_list" => book.tags_list}
-    changeset = BookMetadata.changeset(%BookMetadata{}, params) 
+    params = %{"title" => book.title,
+               "author_firstname" => book.author_firstname,
+               "author_lastname" => book.author_lastname,
+               "year" => book.year,
+               "tags_list" => book.tags_list}
+    changeset = BookMetadata.changeset(%BookMetadata{}, params)
     case Repo.insert!(changeset) do
       metadata ->
-        metadata
-        |> Tagging.update_tags(metadata.tags_list)
+        Tagging.update_tags(metadata, metadata.tags_list)
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    book_metadata = Repo.get!(BookMetadata, id)
-    Repo.delete!(book_metadata)
-
+    Repo.delete!(Repository.get_metadata(id))
     conn
     |> put_flash(:info, "Book metadata deleted successfully.")
     |> redirect(to: book_metadata_path(conn, :index))

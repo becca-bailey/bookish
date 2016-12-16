@@ -27,7 +27,7 @@ defmodule Bookish.Tagging do
     try do
       Repo.get_by!(Tag, text: text)
     rescue
-      Ecto.NoResultsError -> 
+      Ecto.NoResultsError ->
         add_tag(text)
     end
   end
@@ -48,7 +48,7 @@ defmodule Bookish.Tagging do
 
   def set_tags_list(book) do
     tags_list = tags_to_string book.tags
-    changeset = 
+    changeset =
       book
       |> BookMetadata.add_tags(%{"tags_list": tags_list})
 
@@ -59,7 +59,7 @@ defmodule Bookish.Tagging do
   end
 
   defp tags_to_string(tags) do
-    tags 
+    tags
     |> Enum.map(&(&1.text))
     |> Enum.join(", ")
   end
