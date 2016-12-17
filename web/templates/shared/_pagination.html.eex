@@ -2,7 +2,7 @@
   <%= for n <- 1..@page_count do %>
     <%= if @page_count > 1 do %>
       <span class="<%= get_number_class(n, @current_page) %>">
-        <%= link to: pagination_path(@conn, :paginate, n) do %>
+        <%= link to: book_metadata_pagination_path(@conn, :index, n) do %>
           <%= n %>
         <% end %>
       </span>

@@ -2,6 +2,9 @@ defmodule Bookish.Router do
   use Bookish.Web, :router
   require Ueberauth
 
+  @book_metadata "/book_records"
+  @books "/books"
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -14,13 +17,18 @@ defmodule Bookish.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/books", Bookish do
+  scope @books, Bookish do
     pipe_through :browser
     get "/page/:number", PaginationController, :paginate
     get "/checked_out", BookController, :checked_out, as: :book
     get "/:book_id/return", ReturnController, :return, as: :return
     post "/:book_id/return", ReturnController, :process_return, as: :return
     put "/:book_id/return", ReturnController, :process_return, as: :return
+  end
+
+  scope @book_metadata, Bookish do
+    pipe_through :browser
+    get "/page/:number", BookMetadataPaginationController, :index, as: :book_metadata_pagination
   end
 
   scope "/auth", Bookish do
@@ -36,12 +44,12 @@ defmodule Bookish.Router do
     pipe_through :browser
 
     get "/", PageController, :index
-    resources "/books", BookMetadataController do
-      resources "/copies", BookMetadataBookController, only: [:new, :create, :edit, :update]
+    resources @book_metadata, BookMetadataController do
+      resources @books, BookMetadataBookController, only: [:new, :create, :edit, :update]
       resources "/locations", BookMetadataLocationController, only: [:show]
     end
 
-    resources "/book_copies", BookController, except: [:index, :show] do
+    resources @books, BookController, except: [:index, :show] do
       resources "/check_outs", CheckOutController, only: [:index, :new, :create]
     end
 

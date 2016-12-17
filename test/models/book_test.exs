@@ -24,13 +24,13 @@ defmodule Bookish.BookTest do
     changeset = Book.changeset(%Book{}, attributes)
     refute changeset.valid?
   end
-  
+
   test "author_firstname cannot be an empty string" do
     attributes = %{author_firstname: "", author_lastname: "last name", current_location: "current location", title: "title", year: 2016}
     changeset = Book.changeset(%Book{}, attributes)
     refute changeset.valid?
   end
-  
+
   test "author_lastname cannot be an empty string" do
     attributes = %{author_firstname: "first name", author_lastname: "", current_location: "current location", title: "title", year: 2016}
     changeset = Book.changeset(%Book{}, attributes)
@@ -56,23 +56,23 @@ defmodule Bookish.BookTest do
   test "a book has a location" do
     location = Repo.insert! %Location{name: "Chicago"}
     book = Repo.insert! %Book{}
-   
-    updated_book =  
+
+    updated_book =
       book
       |> Repo.preload(:location)
       |> Ecto.Changeset.change()
       |> Ecto.Changeset.put_assoc(:location, location)
       |> Repo.update!
-    
+
     assert updated_book.location.name == "Chicago"
   end
-  
+
   test "when checking out a book, current_location must be an empty string" do
     attributes = %{current_location: "location"}
     changeset = Book.checkout(%Book{}, attributes)
     refute changeset.valid?
   end
-  
+
   test "return is valid with current_location" do
     attributes = %{current_location: "location"}
     changeset = Book.return(%Book{}, attributes)
@@ -84,7 +84,7 @@ defmodule Bookish.BookTest do
     changeset = Book.return(%Book{}, attributes)
     refute changeset.valid?
   end
-  
+
   test "checked_out? returns false if no check_out record exists for the book" do
     book = Repo.insert! %Book{}
 
@@ -118,35 +118,35 @@ defmodule Bookish.BookTest do
   test "get_checked_out returns an empty collection if there are no books to query" do
     assert empty? Book.get_checked_out(Book) |> Repo.all
   end
-  
+
   test "get_checked_out returns books checked out by user id" do
     book1 = Repo.insert! %Book{current_location: "book 1"}
     check_out =
       Ecto.build_assoc(book1, :check_outs, borrower_id: "1")
     Repo.insert!(check_out)
-    
+
     book2 = Repo.insert! %Book{current_location: "book 2"}
     check_out =
       Ecto.build_assoc(book2, :check_outs, borrower_id: "2")
     Repo.insert!(check_out)
 
-    books = 
+    books =
       Book
       |> Book.get_checked_out("1")
       |> Repo.all
 
     assert books == [book1]
   end
- 
+
   test "borrower_name returns the name of the person the book is checked out to" do
     book = Repo.insert! %Book{}
     check_out =
       Ecto.build_assoc(book, :check_outs, borrower_name: "Person")
     Repo.insert!(check_out)
- 
+
     assert Book.borrower_name(book) == "Person"
   end
- 
+
   test "borrower_name returns nil if the book is currently available" do
     book = Repo.insert! %Book{}
 
@@ -172,44 +172,14 @@ defmodule Bookish.BookTest do
   #    assert Book |> Book.get_by_letter("b") |> Repo.all == [b]
   #    assert Book |> Book.get_by_letter("C") |> Repo.all == []
   #  end
-  #  
-  test "paginate returns the number of entries offset by the page number" do
-    for _ <- 1..12 do Repo.insert!(%Book{}) end
-    entries_per_page = 10
-    page_1 = 
-      Book
-      |> Book.paginate(1, entries_per_page)
-      |> Repo.all
-    page_1_count = length(page_1)
-
-    assert page_1_count == 10
-
-    page_2 = 
-      Book
-      |> Book.paginate(2, entries_per_page)
-      |> Repo.all
-    page_2_count = length(page_2)
-
-    assert page_2_count == 2
-  end
-  
-  test "count returns the number of results in a query" do
-    for _ <- 1..5 do Repo.insert!(%Book{}) end
-    count = 
-      Book
-      |> Book.count
-      |> Repo.all
-      |> List.first
-
-    assert count == 5
-  end
+  #
 
   test "get_books_by_location_with_metadata return books with matching location and metadata" do
-    book_metadata = Repo.insert! %BookMetadata{}  
+    book_metadata = Repo.insert! %BookMetadata{}
     location = Repo.insert! %Location{}
     book = Repo.insert! %Book{book_metadata: book_metadata, location: location}
 
-    result = 
+    result =
       Book
       |> Book.get_books_for_location_with_metadata(location, book_metadata)
       |> Repo.all

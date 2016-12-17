@@ -7,13 +7,18 @@ defmodule Bookish.BookMetadataController do
   alias Bookish.Tagging
   alias Bookish.Repository
 
+  @entries_per_page 10
+
   def index(conn, _params) do
-    render(conn, "index.html", books: Repository.get_metadata, page_count: 1, current_page: 1)
+    render(conn, "index.html", books: Repository.get_metadata(1, @entries_per_page),
+                               page_count: Repository.total_number_of_pages(@entries_per_page),
+                               current_page: 1)
   end
 
   def show(conn, %{"id" => id}) do
     book_metadata = Repository.get_metadata(id)
-    render(conn, "show.html", book_metadata: book_metadata, books: Repository.load_books_from_metadata(book_metadata))
+    render(conn, "show.html", book_metadata: book_metadata,
+                              books: Repository.load_books_from_metadata(book_metadata))
   end
 
   def create(conn, %{"book_metadata" => book_metadata_params}) do
