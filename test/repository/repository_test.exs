@@ -64,7 +64,6 @@ defmodule Bookish.RepositoryTest do
     assert Repository.get_metadata_titles == [{"Book A", book2.id}, {"Book B", book1.id}, {"Book C", book3.id}]
   end
 
-
   defp preload_metadata_associations(metadata) do
     metadata
     |> Repo.preload(:books)

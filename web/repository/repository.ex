@@ -110,6 +110,13 @@ defmodule Bookish.Repository do
     |> List.first
   end
 
+  def count_book_metadata do
+    BookMetadata
+    |> Resource.count
+    |> Repo.all
+    |> List.first
+  end
+
   def get_associated_metadata_for_check_out(check_out) do
     book = check_out.book |> Repo.preload(:book_metadata)
     book.book_metadata
