@@ -30,21 +30,21 @@ defmodule Bookish.Book do
     |> validate_required([:title, :author_firstname, :author_lastname, :year])
     |> validate_number(:year, greater_than_or_equal_to: 1000, less_than_or_equal_to: 9999, message: "Must be a valid year")
   end
-  
+
   def with_existing_metadata(struct, params \\ %{}) do
     struct
     |> cast(params, [:current_location, :location_id])
     |> validate_required([:current_location, :location_id])
   end
-  
+
   def checkout(struct, params \\ %{}) do
     struct
     |> cast(params, [:borrower_name, :checked_out, :current_location])
     |> validate_inclusion(:current_location, ["", nil])
   end
-  
+
   def return(struct, params \\ %{}) do
-    struct 
+    struct
     |> cast(params, [:current_location])
     |> validate_required([:current_location])
   end
@@ -55,16 +55,16 @@ defmodule Bookish.Book do
   end
 
   def set_checked_out(struct, params \\ %{}) do
-    struct 
+    struct
     |> cast(params, [:checked_out, :borrower_name])
   end
 
-  # Helpers 
-  
+  # Helpers
+
   def checked_out?(book_id) when is_integer(book_id) do
     current_record_exists(book_id)
   end
-  
+
   def checked_out?(book) do
     current_record_exists(book.id)
   end
@@ -89,7 +89,7 @@ defmodule Bookish.Book do
 
   def get_first_record(book_id) do
     get_current_records(book_id)
-    |> List.first      
+    |> List.first
   end
 
   def current_record_exists(book_id) do
@@ -102,30 +102,6 @@ defmodule Bookish.Book do
   end
 
   # Queries
-
-  def sorted_by_title(query) do
-    from r in query,
-      order_by: r.title,
-      select: r
-  end
-  
-  def get_by_letter(query, letter) do
-    from r in query,
-      where: ilike(r.title, ^"#{letter}%"),
-      order_by: r.title,
-      select: r
-  end
-
-  def paginate(query, page, size) do
-    from b in query,
-      limit: ^size,
-      offset: ^((page-1) * size)
-  end
-
-  def count(query) do
-    from b in query,
-      select: count(b.id)
-  end
 
   def get_checked_out(query) do
     from b in query,
@@ -140,7 +116,14 @@ defmodule Bookish.Book do
       where: is_nil(c.return_date) and c.borrower_id == ^borrower_id,
       select: b
   end
-  
+
+  def get_books_with_metadata(metadata) do
+    from b in Bookish.Book,
+      join: d in Bookish.BookMetadata, on: b.book_metadata_id == d.id,
+      where: d.id == ^metadata.id,
+      select: b
+  end
+
   def get_books_for_location_with_metadata(query, location, metadata) do
     from b in query,
       join: d in Bookish.BookMetadata, on: b.book_metadata_id == d.id,

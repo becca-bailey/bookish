@@ -1,0 +1,58 @@
+<%= render Bookish.SharedView, "_header.html", conn: @conn %>
+
+<h2>Where is that book?</h2>
+
+<div class="books">
+  <%= if empty?(@books) do %>
+    <p>No books match this criteria.</p>
+  <% end %>
+  <%= for book <- @books do %>
+    <div class="entry">
+      <div class="entry-header">
+        <div class="icons small-medium">
+          <%= link to: book_metadata_path(@conn, :edit, book) do %>
+            <i class="fa fa-edit"></i>
+          <% end %>
+          <%= link to: book_metadata_path(@conn, :delete, book), method: :delete, data: [confirm: "Are you sure you want to delete this book?"] do %>
+            <i class="fa fa-remove"></i>
+          <% end %>
+        </div>
+        <span class="title-content">
+          <span class="title">
+            <h3><%= book.title %></h3>
+          </span>
+
+            <%= render Bookish.SharedView, "_tags.html", conn: @conn, tags: book.tags %>
+        </span>
+
+        <span class="icons large">
+          <%= link to: book_metadata_path(@conn, :edit, book) do %>
+            <i class="fa fa-edit"></i>
+          <% end %>
+          <%= link to: book_metadata_path(@conn, :delete, book), method: :delete, data: [confirm: "Are you sure you want to delete this book?"] do %>
+            <i class="fa fa-remove"></i>
+          <% end %>
+        </span>
+      </div>
+      <div class="author"><%= book.author_firstname %> <%= book.author_lastname %></div>
+      <div class="bold-text">
+        <%= link to: book_metadata_path(@conn, :show, book) do %>
+          <i class="fa fa-search"></i> View <%= number_of_copies(book) %>
+        <% end %>
+      </div>
+      <div class="bold-text">
+        <%= link to: book_metadata_book_metadata_book_path(@conn, :new, book) do %>
+          <i class="fa fa-plus-circle"></i> Add a copy
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<%= link to: book_path(@conn, :new) do %>
+  <p class="bold-text">
+    <i class="fa fa-plus-circle"></i> Add a book
+  </p>
+<% end %>
+
+<%= render Bookish.SharedView, "_pagination.html", conn: @conn, page_count: @page_count, current_page: @current_page %>

@@ -1,4 +1,0 @@
-<%= render Bookish.SharedView, "_header.html", conn: @conn %>
-<h2>Where is that book?</h2>
-
-<%= render Bookish.SharedView, "_pagination.html", conn: @conn, page_count: @page_count, current_page: @current_page%>

@@ -4,18 +4,12 @@ defmodule Bookish.BookController do
   plug Bookish.Plugs.RequireAuth when action in [:new, :create, :edit, :update, :delete]
 
   alias Bookish.Book
-  alias Bookish.Location
-  alias Bookish.PaginationController
   alias Bookish.BookMetadataController
   alias Bookish.Repository
 
-  def index(conn, _params) do
-    PaginationController.show_pages(conn, %{"number" => "1"})
-  end
-
   def new(conn, _params) do
     changeset = Book.changeset(%Book{})
-    render(conn, "new.html", changeset: changeset, locations: get_locations)
+    render(conn, "new.html", changeset: changeset, locations: Repository.get_location_names)
   end
 
   def create(conn, %{"book" => book_params}) do
@@ -30,14 +24,14 @@ defmodule Bookish.BookController do
         |> put_flash(:info, "Book created successfully.")
         |> redirect(to: book_metadata_path(conn, :show, metadata))
       {:error, changeset} ->
-        render(conn, "new.html", changeset: changeset, locations: get_locations)
+        render(conn, "new.html", changeset: changeset, locations: Repository.get_location_names)
     end
   end
 
   def edit(conn, %{"id" => id}) do
     book = Repository.get_book(id)
     changeset = Book.with_existing_metadata(book)
-    render(conn, "edit.html", book: book, changeset: changeset, locations: get_locations)
+    render(conn, "edit.html", book: book, changeset: changeset, locations: Repository.get_location_names)
   end
 
   def update(conn, %{"id" => id, "book" => book_params}) do
@@ -50,7 +44,7 @@ defmodule Bookish.BookController do
         |> put_flash(:info, "Book updated successfully.")
         |> redirect(to: book_metadata_path(conn, :show, book.book_metadata))
       {:error, changeset} ->
-        render(conn, "edit.html", book: book, changeset: changeset, locations: get_locations)
+        render(conn, "edit.html", book: book, changeset: changeset, locations: Repository.get_location_names)
     end
   end
 
@@ -79,21 +73,5 @@ defmodule Bookish.BookController do
       {:ok, book} ->
         book
     end
-  end
-
-  defp get_locations do
-    Location.select_name
-    |> Repo.all
-  end
-
-  defp preload_associations(coll) do
-    coll
-    |> Repo.preload(:location)
-    |> Repo.preload(:book_metadata)
-  end
-
-  defp set_virtual_attributes(coll) do
-    coll
-    |> Enum.map(&(set_attributes(&1)))
   end
 end

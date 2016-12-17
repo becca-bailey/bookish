@@ -4,9 +4,11 @@ defmodule Bookish.Repository do
   alias Bookish.BookMetadata
   alias Bookish.Location
   alias Bookish.Tag
+  alias Bookish.Resource
 
   def get_metadata do
-    Repo.all(BookMetadata)
+    BookMetadata.sorted_by_title
+    |> Repo.all
     |> Repo.preload(:tags)
     |> Repo.preload(:books)
   end
@@ -17,8 +19,25 @@ defmodule Bookish.Repository do
     |> Repo.preload(:books)
   end
 
+  def get_metadata(page, entries_per_page) do
+    BookMetadata.sorted_by_title
+    |> Resource.paginate(page, entries_per_page)
+    |> Repo.all
+    |> Repo.preload(:tags)
+    |> Repo.preload(:books)
+  end
+
   def load_books_from_metadata(book_metadata) do
     book_metadata.books
+    |> Repo.preload(:location)
+    |> set_virtual_attributes
+  end
+
+  def load_books_from_metadata(book_metadata, page, entries_per_page) do
+    book_metadata
+    |> Book.get_books_with_metadata
+    |> Resource.paginate(page, entries_per_page)
+    |> Repo.all
     |> Repo.preload(:location)
     |> set_virtual_attributes
   end
@@ -39,7 +58,6 @@ defmodule Bookish.Repository do
 
   def get_books_from_location(location) do
     location.books
-    |> Repo.preload(:tags)
     |> Repo.preload(:location)
   end
 
@@ -47,6 +65,13 @@ defmodule Bookish.Repository do
     Repo.get!(Book, id)
     |> Repo.preload(:location)
     |> Repo.preload(:book_metadata)
+  end
+
+  def get_books(page, entries_per_page) do
+    Book
+    |> Resource.paginate(page, entries_per_page)
+    |> Repo.all
+    |> Repo.preload(:location)
   end
 
   def get_checked_out_books do
@@ -72,6 +97,13 @@ defmodule Bookish.Repository do
     |> Repo.preload(:location)
   end
 
+  def count_book_metadata do
+    BookMetadata
+    |> Resource.count
+    |> Repo.all
+    |> List.first
+  end
+
   def get_associated_metadata_for_check_out(check_out) do
     book = check_out.book |> Repo.preload(:book_metadata)
     book.book_metadata
@@ -86,6 +118,11 @@ defmodule Bookish.Repository do
     tag.book_metadata
     |> Repo.preload(:tags)
     |> Repo.preload(:books)
+  end
+
+  def total_number_of_pages(entries_per_page) do
+    Float.ceil(count_book_metadata / entries_per_page)
+    |> Kernel.trunc
   end
 
   defp set_virtual_attributes(coll) do
