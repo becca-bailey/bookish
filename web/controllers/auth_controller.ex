@@ -37,7 +37,7 @@ defmodule Bookish.AuthController do
         |> redirect(to: path)
     end
   end
-  
+
   def get_user(conn) do
     get_session(conn, :current_user) || conn.assigns[:current_user]
   end

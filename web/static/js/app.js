@@ -21,19 +21,25 @@ import "phoenix_html"
 // import socket from "./socket"
 //
 
-$('#available').on('click', function() {
-  $(this).toggleClass('selected');
-  $('.books').toggleClass('show-available');
-  $("#checked-out").removeClass('selected');
-  $('.books').removeClass('show-checked-out');
+$('#choose-existing .form-group').hide();
+$('#choose-existing .form-error').hide();
+$('#create-new .form-group').hide();
+$('#create-new .form-error').hide();
+
+$('#choose-existing a').on('click', function() {
+  $(this).toggleClass('active');
+  $('#create-new a').removeClass('active');
+  $('#choose-existing .form-group').toggle();
+  $('#choose-existing .form-error').toggle();
+  $('#create-new .form-group').hide();
+  $('#create-new .form-error').hide();
 });
 
-$('#checked-out').on('click', function() {
-  $(this).toggleClass('selected');
-  $('.books').toggleClass('show-checked-out');
-  $("#available").removeClass('selected');
-  $('.books').removeClass('show-available');
+$('#create-new a').on('click', function() {
+  $(this).toggleClass('active');
+  $('#choose-existing a').removeClass('active');
+  $('#create-new .form-group').toggle();
+  $('#create-new .form-error').toggle();
+  $('#choose-existing .form-group').hide();
+  $('#choose-existing .form-error').hide();
 });
-
-
-

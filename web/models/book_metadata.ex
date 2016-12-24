@@ -35,4 +35,16 @@ defmodule Bookish.BookMetadata do
       order_by: m.title,
       select: m
   end
+
+  def search(search_term) do
+    from m in Bookish.BookMetadata,
+      where: ilike(m.title, ^"%#{search_term}%") or ilike(m.author_firstname, ^search_term) or ilike(m.author_lastname, ^search_term),
+      select: m
+  end
+
+  def select_title do
+    from m in Bookish.BookMetadata,
+      order_by: m.title,
+      select: {m.title, m.id}
+  end
 end

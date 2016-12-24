@@ -9,7 +9,9 @@ defmodule Bookish.BookController do
 
   def new(conn, _params) do
     changeset = Book.changeset(%Book{})
-    render(conn, "new.html", changeset: changeset, locations: Repository.get_location_names)
+    render(conn, "new.html", changeset: changeset,
+                             locations: Repository.get_location_names,
+                             book_metadata_titles: Repository.get_metadata_titles)
   end
 
   def create(conn, %{"book" => book_params}) do
@@ -17,15 +19,26 @@ defmodule Bookish.BookController do
 
     case Repo.insert(changeset) do
       {:ok, book} ->
-        metadata = BookMetadataController.build_from_book book
-        Repository.associate_book_with_metadata(book, metadata)
-
+        book = book |> Repo.preload(:book_metadata)
+        metadata =
+          case book.book_metadata do
+            nil -> build_and_associate_metadata book
+            _   -> book.book_metadata
+          end
         conn
         |> put_flash(:info, "Book created successfully.")
         |> redirect(to: book_metadata_path(conn, :show, metadata))
       {:error, changeset} ->
-        render(conn, "new.html", changeset: changeset, locations: Repository.get_location_names)
+        render(conn, "new.html", changeset: changeset,
+                                 locations: Repository.get_location_names,
+                                 book_metadata_titles: Repository.get_metadata_titles)
     end
+  end
+
+  defp build_and_associate_metadata(book) do
+    metadata = BookMetadataController.build_from_book book
+    Repository.associate_book_with_metadata(book, metadata)
+    metadata
   end
 
   def edit(conn, %{"id" => id}) do
