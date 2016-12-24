@@ -37,12 +37,6 @@ defmodule Bookish.BookTest do
     refute changeset.valid?
   end
 
-  test "year must be a four-digit number" do
-    attributes = %{author_firstname: "first name", author_lastname: "last name", current_location: "current location", title: "title", year: 42}
-    changeset = Book.changeset(%Book{}, attributes)
-    refute changeset.valid?
-  end
-
   test "checked_out defaults to false" do
     book = Repo.insert!(%Book{})
     refute book.checked_out
@@ -188,5 +182,13 @@ defmodule Bookish.BookTest do
       |> Repo.preload(:book_metadata)
 
     assert result == book
+  end
+
+  test "validates that a new book contains a book_metadata_id or new metadata" do
+    has_metadata_id = Book.changeset(%Book{}, %{location_id: 1, book_metadata_id: 1})
+    assert has_metadata_id.valid?
+
+    has_book_data = Book.changeset(%Book{}, %{location_id: 1, title: "Title", author_firstname: "Firstname", author_lastname: "Lastname", year: 2016})
+    assert has_book_data.valid?
   end
 end

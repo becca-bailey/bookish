@@ -42,6 +42,11 @@ defmodule Bookish.Repository do
     |> set_virtual_attributes
   end
 
+  def get_metadata_titles do
+    BookMetadata.select_title
+    |> Repo.all
+  end
+
   def get_location_names do
     Location.select_name
     |> Repo.all
@@ -95,6 +100,7 @@ defmodule Bookish.Repository do
     |> Book.get_books_for_location_with_metadata(location, metadata)
     |> Repo.all
     |> Repo.preload(:location)
+    |> set_virtual_attributes
   end
 
   def count_book_metadata do
@@ -123,6 +129,12 @@ defmodule Bookish.Repository do
   def total_number_of_pages(entries_per_page) do
     Float.ceil(count_book_metadata / entries_per_page)
     |> Kernel.trunc
+  end
+
+  def search_book_metadata(search_terms) do
+    String.split(search_terms, " ")
+    |> Enum.flat_map(&(BookMetadata.search(&1) |> Repo.all))
+    |> Enum.uniq_by(&(&1))
   end
 
   defp set_virtual_attributes(coll) do

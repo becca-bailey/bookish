@@ -4,6 +4,7 @@ defmodule Bookish.RepositoryTest do
   alias Bookish.BookMetadata
   alias Bookish.Repository
   alias Bookish.Book
+  alias Bookish.Location
 
   test "Returns a list of book metadata in alphabetical order by title" do
     c = Repo.insert! %BookMetadata{title: "C"} |> preload_metadata_associations
@@ -43,6 +44,26 @@ defmodule Bookish.RepositoryTest do
 
     assert Repository.load_books_from_metadata(metadata, 1, 10) == []
   end
+
+  test "Search book metadata returns results for space-separated search terms" do
+    metadata1 = Repo.insert! %BookMetadata{title: "abc", author_firstname: "def", author_lastname: "ghi"}
+
+    assert Repository.search_book_metadata("abc def ghi") == [metadata1]
+  end
+
+  test "Gets location names and ids" do
+    location1 = Repo.insert! %Location{name: "Chicago"}
+    location2 = Repo.insert! %Location{name: "New York"}
+    assert Repository.get_location_names == [{"Chicago", location1.id}, {"New York", location2.id}]
+  end
+
+  test "Gets existing book titles and ids ordered alphabetically" do
+    book1 = Repo.insert! %BookMetadata{title: "Book B"}
+    book2 = Repo.insert! %BookMetadata{title: "Book A"}
+    book3 = Repo.insert! %BookMetadata{title: "Book C"}
+    assert Repository.get_metadata_titles == [{"Book A", book2.id}, {"Book B", book1.id}, {"Book C", book3.id}]
+  end
+
 
   defp preload_metadata_associations(metadata) do
     metadata

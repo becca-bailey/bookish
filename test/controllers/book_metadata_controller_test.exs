@@ -6,7 +6,7 @@ defmodule Bookish.BookMetadataControllerTest do
   alias Bookish.Location
   alias Bookish.Tag
 
-  @valid_attrs %{"title" => "A book", "author_firstname" => "first", "author_lastname" => "last", "year" => 2016}
+  @valid_attrs %{"title" => "A book", "author_firstname" => "first", "author_lastname" => "last", "year" => 2016, "location_id" => 1}
   @invalid_attrs %{}
   @user %{id: "email", name: "user"}
 
@@ -46,7 +46,7 @@ defmodule Bookish.BookMetadataControllerTest do
     assert html_response(conn, 200) =~ "2 copies"
   end
 
-  test "Creating a book creates associated metadata", %{conn: conn} do
+  test "Creating a book creates associated metadata if there is no metadata_id", %{conn: conn} do
     book_params = @valid_attrs
 
     conn
@@ -64,6 +64,22 @@ defmodule Bookish.BookMetadataControllerTest do
      assert data.author_firstname == book_params["author_firstname"]
      assert data.author_lastname == book_params["author_lastname"]
      assert data.year == book_params["year"]
+  end
+  
+  test "Creating a book associates metadata if there is a metadata_id", %{conn: conn} do
+    book_metadata = Repo.insert! %BookMetadata{}
+    book_params = %{book_metadata_id: book_metadata.id, location_id: 1} 
+
+    conn
+    |> assign(:current_user, @user)
+    |> post(book_path(conn, :create), book: book_params)
+
+    book =
+      Repo.all(Book)
+      |> List.first
+      |> Repo.preload(:book_metadata)
+
+    assert book.book_metadata == book_metadata
   end
 
   test "Creating a book fails if it does not include valid metadata", %{conn: conn} do

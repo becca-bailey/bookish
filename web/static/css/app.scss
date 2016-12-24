@@ -8,6 +8,14 @@
 
 // Default Styles
 
+a {
+  cursor: pointer;
+}
+
+.active {
+  color: white;
+}
+
 body {
   font-family: Lato, Helvetica-neue, sans-serif;
   color: $text-color;

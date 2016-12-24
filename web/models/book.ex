@@ -26,15 +26,15 @@ defmodule Bookish.Book do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:title, :author_firstname, :author_lastname, :year, :current_location, :tags_list, :location_id])
-    |> validate_required([:title, :author_firstname, :author_lastname, :year])
-    |> validate_number(:year, greater_than_or_equal_to: 1000, less_than_or_equal_to: 9999, message: "Must be a valid year")
+    |> cast(params, [:title, :author_firstname, :author_lastname, :year, :book_metadata_id, :current_location, :tags_list, :location_id])
+    |> validate_required([:location_id])
+    |> validate_contains_book_metadata
   end
 
   def with_existing_metadata(struct, params \\ %{}) do
     struct
     |> cast(params, [:current_location, :location_id])
-    |> validate_required([:current_location, :location_id])
+    |> validate_required([:location_id])
   end
 
   def checkout(struct, params \\ %{}) do
@@ -99,6 +99,32 @@ defmodule Bookish.Book do
 
   defp not_empty?(coll) do
     List.first(coll) != nil
+  end
+
+  # Validations
+
+  defp validate_contains_book_metadata(changeset) do
+    book_metadata_id = get_field(changeset, :book_metadata_id)
+    validate_contains_book_metadata(changeset, book_metadata_id)
+  end
+
+  defp validate_contains_book_metadata(changeset, id) when is_nil(id) do
+    changeset
+    |> validate_required([:title, :author_firstname, :author_lastname, :year])
+    |> add_error_if_all_fields_are_blank
+  end
+
+  defp validate_contains_book_metadata(changeset, _) do
+    changeset
+  end
+
+  defp add_error_if_all_fields_are_blank(changeset) do
+    if !get_field(changeset, :title) && !get_field(changeset, :author_firstname) && !get_field(changeset, :author_lastname) && !get_field(changeset, :year) do
+      changeset
+      |> add_error(:no_book_metadata, "You must choose a title or add new book data")
+    else
+      changeset
+    end
   end
 
   # Queries
