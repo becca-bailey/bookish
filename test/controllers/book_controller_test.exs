@@ -106,7 +106,11 @@ defmodule Bookish.BookControllerTest do
   end
 
   test "renders checked_out page", %{conn: conn} do
-    conn = get conn, "/books/checked_out"
+    conn = 
+      conn
+      |> assign(:current_user, @user)
+      |> get(book_path(conn, :checked_out))
+
     assert conn.status == 200
   end
 
@@ -120,7 +124,11 @@ defmodule Bookish.BookControllerTest do
       Ecto.build_assoc(checked_out_book, :check_outs, borrower_name: "Person")
     Repo.insert!(check_out)
 
-    conn = get conn, book_path(conn, :checked_out)
+    conn = 
+      conn
+      |> assign(:current_user, @user)
+      |> get(book_path(conn, :checked_out))
+
     assert html_response(conn, 200) =~ "This book is checked out"
     refute html_response(conn, 200) =~ "This book is not checked out"
   end

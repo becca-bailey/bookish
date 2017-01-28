@@ -65,7 +65,7 @@ defmodule Bookish.BookMetadataControllerTest do
      assert data.author_lastname == book_params["author_lastname"]
      assert data.year == book_params["year"]
   end
-  
+
   test "Creating a book associates metadata if there is a metadata_id", %{conn: conn} do
     book_metadata = Repo.insert! %BookMetadata{}
     book_params = %{book_metadata_id: book_metadata.id, location_id: 1} 
@@ -249,7 +249,10 @@ defmodule Bookish.BookMetadataControllerTest do
     book_metadata = Repo.insert! %BookMetadata{} |> Repo.preload(:books)
     location = Repo.insert! %Location{name: "Chicago"}
     Repo.insert! Ecto.build_assoc(book_metadata, :books, location: location)
-    conn = get conn, book_metadata_path(conn, :show, book_metadata)
+    conn =
+      conn
+      |> assign(:curent_user, @user)
+      |> get(book_metadata_path(conn, :show, book_metadata))
 
     assert html_response(conn, 200) =~ "Chicago"
   end
@@ -257,7 +260,11 @@ defmodule Bookish.BookMetadataControllerTest do
   test "If a copy is not checked out, shows its location details and a link to check out the book", %{conn: conn} do
     book_metadata = Repo.insert! %BookMetadata{} |> Repo.preload(:books)
     Repo.insert! Ecto.build_assoc(book_metadata, :books, current_location: "10th floor")
-    conn = get conn, book_metadata_path(conn, :show, book_metadata)
+
+    conn =
+      conn
+      |> assign(:curent_user, @user)
+      |> get(book_metadata_path(conn, :show, book_metadata))
 
     assert html_response(conn, 200) =~ "10th floor"
     assert html_response(conn, 200) =~ "Check out"
@@ -285,7 +292,10 @@ defmodule Bookish.BookMetadataControllerTest do
     Ecto.build_assoc(book, :check_outs, borrower_name: "Becca")
     |> Repo.insert!
 
-    conn = get conn, book_metadata_path(conn, :show, book_metadata)
+    conn =
+      conn
+      |> assign(:curent_user, @user)
+      |> get(book_metadata_path(conn, :show, book_metadata))
 
     assert html_response(conn, 200) =~ "Becca"
   end
@@ -294,7 +304,10 @@ defmodule Bookish.BookMetadataControllerTest do
     book_metadata = Repo.insert! %BookMetadata{}
     Repo.insert! %Book{book_metadata: book_metadata}
 
-    conn = get conn, book_metadata_path(conn, :show, book_metadata)
+    conn =
+      conn
+      |> assign(:curent_user, @user)
+      |> get(book_metadata_path(conn, :show, book_metadata))
 
     assert html_response(conn, 200) =~ "Check out"
   end
@@ -305,7 +318,10 @@ defmodule Bookish.BookMetadataControllerTest do
     Ecto.build_assoc(book, :check_outs, borrower_name: "Becca")
     |> Repo.insert!
 
-    conn = get conn, book_metadata_path(conn, :show, book_metadata)
+    conn =
+      conn
+      |> assign(:curent_user, @user)
+      |> get(book_metadata_path(conn, :show, book_metadata))
 
     assert html_response(conn, 200) =~ "checked-out"
   end
@@ -314,7 +330,10 @@ defmodule Bookish.BookMetadataControllerTest do
     book_metadata = Repo.insert! %BookMetadata{}
     Repo.insert! %Book{book_metadata: book_metadata}
 
-    conn = get conn, book_metadata_path(conn, :show, book_metadata)
+    conn =
+      conn
+      |> assign(:current_user, @user)
+      |> get(book_metadata_path(conn, :show, book_metadata))
 
     assert html_response(conn, 200) =~ "available"
   end
