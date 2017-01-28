@@ -6,7 +6,7 @@ defmodule Bookish.ReturnController do
   alias Bookish.AuthController, as: Auth
   alias Bookish.Repository
 
-  plug Bookish.Plugs.RequireAuth when action in [:process_return]
+  plug Bookish.Plugs.RequireAuth when action in [:return, :try_return, :process_return]
   plug Bookish.Plugs.AssignBook
 
   def return(conn, %{"book_id" => id}) do
@@ -52,5 +52,4 @@ defmodule Bookish.ReturnController do
 
     Repo.update(changeset)
   end
-
 end

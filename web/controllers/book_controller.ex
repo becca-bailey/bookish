@@ -1,7 +1,7 @@
 defmodule Bookish.BookController do
   use Bookish.Web, :controller
 
-  plug Bookish.Plugs.RequireAuth when action in [:new, :create, :edit, :update, :delete]
+  plug Bookish.Plugs.RequireAuth when action in [:new, :create, :edit, :update, :delete, :checked_out]
 
   alias Bookish.Book
   alias Bookish.BookMetadataController
