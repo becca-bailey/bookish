@@ -124,17 +124,6 @@ defmodule Bookish.BookMetadataControllerTest do
     assert redirected_to(conn) == "/"
   end
 
-  # test "does not update book_metadata and renders errors when data is invalid", %{conn: conn} do
-  #  book_metadata = Repo.insert! %BookMetadata{}
-  #
-  #  conn =
-  #    conn
-  #    |> assign(:current_user, @user)
-  #    |> put(book_metadata_path(conn, :update, book_metadata), book: @invalid_attrs)
-  #
-  #  assert conn.status == 200
-  # end
-
   test "the edit page for a book with tags shows the existing tags", %{conn: conn} do
 
     params = %{title: "The book", author_firstname: "first", author_lastname: "last", year: 2016, tags_list: "nice, short, great"}

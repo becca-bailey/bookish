@@ -44,7 +44,7 @@ defmodule Bookish.AuthController do
 
   defp get_path(conn) do
     if get_session(conn, :redirect_method) in ["POST", "PUT", "DELETE"] do
-      "/books"
+      "/book_records"
     else
       get_session(conn, :redirect_url) || "/"
     end

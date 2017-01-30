@@ -6,16 +6,6 @@ defmodule Bookish.LocationControllerTest do
   @valid_attrs %{name: "some content"}
   @invalid_attrs %{}
 
-  #  test "the location show route shows a list of books with that location", 
-  #  %{conn: conn} do
-  #    location = Repo.insert!(%Location{name: "Chicago"})
-  #    Repo.insert!(%Book{title: "Book in Chicago", location: location})
-  #
-  #    conn = get conn, location_path(conn, :show, location)
-  #
-  #    assert html_response(conn, 200) =~ "Book in Chicago"
-  #  end
-  #
   test "lists all entries on index", %{conn: conn} do
     conn = get conn, location_path(conn, :index)
     assert html_response(conn, 200) =~ "Listing locations"

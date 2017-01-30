@@ -21,7 +21,6 @@
           <span class="title">
             <h3><%= book.title %></h3>
           </span>
-
             <%= render Bookish.SharedView, "_tags.html", conn: @conn, tags: book.tags %>
         </span>
 
@@ -34,7 +33,7 @@
           <% end %>
         </span>
       </div>
-      <div class="author"><%= book.author_firstname %> <%= book.author_lastname %></div>
+      <div class="author"><%= book.author_firstname %> <%= book.author_lastname %> - <%= book.year %></div>
       <div class="bold-text">
         <%= link to: book_metadata_path(@conn, :show, book) do %>
           <i class="fa fa-search"></i> View <%= number_of_copies(book) %>
