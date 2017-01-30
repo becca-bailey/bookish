@@ -19,7 +19,6 @@ defmodule Bookish.Router do
 
   scope @books, Bookish do
     pipe_through :browser
-    get "/page/:number", PaginationController, :paginate
     get "/checked_out", BookController, :checked_out, as: :book
     get "/:book_id/return", ReturnController, :return, as: :return
     post "/:book_id/return", ReturnController, :process_return, as: :return
